@@ -5,7 +5,6 @@
   "main": "index.js",
   "author": "Timothy Carambat (Mintplex Labs)",
   "license": "MIT",
-  "private": false,
   "engines": {
     "node": ">=18.12.1"
   },
@@ -87,7 +86,6 @@
     "winston": "^3.13.0"
   },
   "resolutions": {
-    "**/graphql-request/form-data": "3.0.4",
     "form-data": "4.0.4"
   },
   "devDependencies": {

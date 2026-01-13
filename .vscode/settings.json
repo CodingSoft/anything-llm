@@ -60,5 +60,8 @@
     "Zilliz"
   ],
   "eslint.experimental.useFlatConfig": true,
-  "docker.languageserver.formatter.ignoreMultilineInstructions": true
+  "docker.languageserver.formatter.ignoreMultilineInstructions": true,
+  "continue.enableConsole": true,
+  "continue.showInlineTip": true,
+  
 }
