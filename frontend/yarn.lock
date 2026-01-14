@@ -1571,6 +1571,7 @@ __metadata:
     react-tooltip: "npm:^5.25.2"
     recharts: "npm:^2.12.5"
     recharts-to-png: "npm:^2.3.1"
+    regenerator-runtime: "npm:^0.14.1"
     rollup-plugin-visualizer: "npm:^5.9.0"
     tailwindcss: "npm:^3.3.1"
     text-case: "npm:^1.0.9"
@@ -5880,7 +5881,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"regenerator-runtime@npm:^0.14.0":
+"regenerator-runtime@npm:^0.14.0, regenerator-runtime@npm:^0.14.1":
   version: 0.14.1
   resolution: "regenerator-runtime@npm:0.14.1"
   checksum: 10c0/1b16eb2c4bceb1665c89de70dcb64126a22bc8eb958feef3cd68fe11ac6d2a4899b5cd1b80b0774c7c03591dc57d16631a7f69d2daa2ec98100e2f29f7ec4cc4
