@@ -5,6 +5,13 @@ FROM ubuntu:noble-20251013 AS base
 ARG ARG_UID=1000
 ARG ARG_GID=1000
 
+# Metadata labels for GitHub Container Registry
+LABEL org.opencontainers.image.source=https://github.com/CodingSoft/anything-llm
+LABEL org.opencontainers.image.description="The all-in-one Desktop & Docker AI application with built-in RAG, AI agents, No-code agent builder, MCP compatibility, and more."
+LABEL org.opencontainers.image.licenses=MIT
+LABEL org.opencontainers.image.title="AnythingLLM"
+LABEL org.opencontainers.image.version=master
+
 FROM base AS build-arm64
 RUN echo "Preparing build of AnythingLLM image for arm64 architecture"
 
