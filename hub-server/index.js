@@ -3,7 +3,8 @@ import cors from "cors";
 import { v4 as uuidv4 } from "uuid";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
-import { existsSync, readFileSync } from "fs";
+import { existsSync } from "fs";
+import Database from "better-sqlite3";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -18,7 +19,95 @@ if (existsSync(join(__dirname, 'public'))) {
   app.use(express.static(join(__dirname, 'public')));
 }
 
-const ITEMS = {
+const DB_PATH = join(__dirname, 'hub.db');
+const db = new Database(DB_PATH);
+
+db.exec(`
+  CREATE TABLE IF NOT EXISTS items (
+    id TEXT PRIMARY KEY,
+    itemType TEXT NOT NULL,
+    name TEXT NOT NULL,
+    description TEXT,
+    prompt TEXT,
+    command TEXT,
+    config TEXT,
+    tags TEXT,
+    author TEXT DEFAULT 'CodingSoft',
+    visibility TEXT DEFAULT 'public',
+    createdAt TEXT DEFAULT (datetime('now')),
+    updatedAt TEXT
+  );
+  
+  CREATE INDEX IF NOT EXISTS idx_itemType ON items(itemType);
+  CREATE INDEX IF NOT EXISTS idx_visibility ON items(visibility);
+`);
+
+function getItemsByType(itemType) {
+  const stmt = db.prepare('SELECT * FROM items WHERE itemType = ? ORDER BY createdAt DESC');
+  return stmt.all(itemType);
+}
+
+function getItem(itemType, id) {
+  const stmt = db.prepare('SELECT * FROM items WHERE itemType = ? AND id = ?');
+  return stmt.get(itemType, id);
+}
+
+function createItem(itemType, data) {
+  const id = data.id || Date.now().toString();
+  const stmt = db.prepare(`
+    INSERT INTO items (id, itemType, name, description, prompt, command, config, tags, author, visibility, createdAt)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `);
+  
+  stmt.run(
+    id,
+    itemType,
+    data.name,
+    data.description || '',
+    data.prompt || data.config || '',
+    data.command || null,
+    data.config ? JSON.stringify(data.config) : null,
+    data.tags ? JSON.stringify(data.tags) : '[]',
+    data.author || 'CodingSoft',
+    data.visibility || 'public',
+    new Date().toISOString()
+  );
+  
+  return getItem(itemType, id);
+}
+
+function updateItem(itemType, id, data) {
+  const existing = getItem(itemType, id);
+  if (!existing) return null;
+  
+  const stmt = db.prepare(`
+    UPDATE items SET name=?, description=?, prompt=?, command=?, config=?, tags=?, visibility=?, updatedAt=?
+    WHERE id=? AND itemType=?
+  `);
+  
+  stmt.run(
+    data.name || existing.name,
+    data.description || existing.description,
+    data.prompt || existing.prompt,
+    data.command || existing.command,
+    data.config ? JSON.stringify(data.config) : existing.config,
+    data.tags ? JSON.stringify(data.tags) : existing.tags,
+    data.visibility || existing.visibility,
+    new Date().toISOString(),
+    id,
+    itemType
+  );
+  
+  return getItem(itemType, id);
+}
+
+function deleteItem(itemType, id) {
+  const stmt = db.prepare('DELETE FROM items WHERE itemType = ? AND id = ?');
+  const result = stmt.run(itemType, id);
+  return result.changes > 0;
+}
+
+const INITIAL_ITEMS = {
   "system-prompt": [
     {
       id: "creative-writer",
@@ -27,8 +116,7 @@ const ITEMS = {
       author: "CodingSoft",
       visibility: "public",
       prompt: "You are a creative writing assistant. Help users craft engaging stories, poems, and other creative content.",
-      tags: ["writing", "creative", "general"],
-      createdAt: new Date().toISOString(),
+      tags: JSON.stringify(["writing", "creative", "general"]),
     },
     {
       id: "data-analyst",
@@ -37,8 +125,7 @@ const ITEMS = {
       author: "CodingSoft",
       visibility: "public",
       prompt: "You are a data analyst. Help users understand their data, create insights, and suggest visualizations.",
-      tags: ["data", "analysis", "business"],
-      createdAt: new Date().toISOString(),
+      tags: JSON.stringify(["data", "analysis", "business"]),
     },
   ],
   "slash-command": [
@@ -49,9 +136,8 @@ const ITEMS = {
       author: "CodingSoft",
       visibility: "public",
       command: "/traducir",
-      prompt: "Translate the following text to Spanish, preserving cultural context and nuances. Provide the translation and a brief explanation of any cultural considerations.",
-      tags: ["spanish", "translation", "language"],
-      createdAt: new Date().toISOString(),
+      prompt: "Translate the following text to Spanish, preserving cultural context and nuances.",
+      tags: JSON.stringify(["spanish", "translation", "language"]),
     },
     {
       id: "resumir",
@@ -60,9 +146,8 @@ const ITEMS = {
       author: "CodingSoft",
       visibility: "public",
       command: "/resumir",
-      prompt: "Summarize the following text in 3-5 key bullet points, capturing the most important information.",
-      tags: ["summary", "productivity", "text"],
-      createdAt: new Date().toISOString(),
+      prompt: "Summarize the following text in 3-5 key bullet points.",
+      tags: JSON.stringify(["summary", "productivity", "text"]),
     },
     {
       id: "preguntar",
@@ -71,9 +156,8 @@ const ITEMS = {
       author: "CodingSoft",
       visibility: "public",
       command: "/preguntar",
-      prompt: "Generate 3-5 intelligent follow-up questions based on the conversation context. Focus on clarifying understanding and exploring deeper insights.",
-      tags: ["questions", "conversation", "engagement"],
-      createdAt: new Date().toISOString(),
+      prompt: "Generate 3-5 intelligent follow-up questions based on the conversation context.",
+      tags: JSON.stringify(["questions", "conversation", "engagement"]),
     },
     {
       id: "codigo",
@@ -82,9 +166,8 @@ const ITEMS = {
       author: "CodingSoft",
       visibility: "public",
       command: "/codigo",
-      prompt: "Explain the following code in clear, educational terms. Break down what each part does and why. Include practical examples of how to use it.",
-      tags: ["coding", "education", "programming"],
-      createdAt: new Date().toISOString(),
+      prompt: "Explain the following code in clear, educational terms.",
+      tags: JSON.stringify(["coding", "education", "programming"]),
     },
     {
       id: "continuar",
@@ -93,49 +176,51 @@ const ITEMS = {
       author: "CodingSoft",
       visibility: "public",
       command: "/continuar",
-      prompt: "Continue the conversation naturally based on the context. Ask relevant questions or provide insights that move the discussion forward.",
-      tags: ["conversation", "continuation", "dialogue"],
-      createdAt: new Date().toISOString(),
+      prompt: "Continue the conversation naturally based on the context.",
+      tags: JSON.stringify(["conversation", "continuation", "dialogue"]),
     },
   ],
-  "agent-flow": [],
-  "agent-skill": [],
 };
 
+function seedDatabase() {
+  const count = db.prepare('SELECT COUNT(*) as count FROM items').get();
+  if (count.count === 0) {
+    console.log('🌱 Seeding database with initial items...');
+    Object.entries(INITIAL_ITEMS).forEach(([itemType, items]) => {
+      items.forEach(item => {
+        createItem(itemType, item);
+      });
+    });
+    console.log('✅ Database seeded successfully');
+  }
+}
+
+seedDatabase();
+
 app.get("/v1/explore", (req, res) => {
-  const result = {
-    systemPrompts: {
-      items: ITEMS["system-prompt"] || [],
+  const types = ["system-prompt", "slash-command", "agent-skill", "agent-flow"];
+  const result = {};
+  
+  types.forEach(type => {
+    const items = getItemsByType(type);
+    const pluralType = type.replace("-", "");
+    result[pluralType + "s"] = {
+      items: items.map(item => ({
+        ...item,
+        tags: typeof item.tags === 'string' ? JSON.parse(item.tags) : item.tags,
+      })),
       hasMore: false,
-      totalCount: (ITEMS["system-prompt"] || []).length,
-    },
-    slashCommands: {
-      items: ITEMS["slash-command"] || [],
-      hasMore: false,
-      totalCount: (ITEMS["slash-command"] || []).length,
-    },
-    agentSkills: {
-      items: ITEMS["agent-skill"] || [],
-      hasMore: false,
-      totalCount: (ITEMS["agent-skill"] || []).length,
-    },
-    agentFlows: {
-      items: ITEMS["agent-flow"] || [],
-      hasMore: false,
-      totalCount: (ITEMS["agent-flow"] || []).length,
-    },
-  };
+      totalCount: items.length,
+    };
+  });
+  
   res.json(result);
 });
 
 app.get("/v1/:itemType/:id/pull", (req, res) => {
   const { itemType, id } = req.params;
   
-  if (!ITEMS[itemType]) {
-    return res.status(404).json({ error: "Item type not found" });
-  }
-  
-  const item = ITEMS[itemType].find((i) => i.id === id);
+  const item = getItem(itemType, id);
   
   if (!item) {
     return res.status(404).json({ error: "Item not found" });
@@ -144,12 +229,22 @@ app.get("/v1/:itemType/:id/pull", (req, res) => {
   res.json({
     item: {
       ...item,
+      tags: typeof item.tags === 'string' ? JSON.parse(item.tags) : item.tags,
       itemType: itemType,
       importId: `allm-community-id:${itemType}:${item.id}`,
     },
     url: null,
     error: null,
   });
+});
+
+app.post("/v1/auth", (req, res) => {
+  const { connectionKey } = req.body;
+  if (connectionKey === "demo-key-123") {
+    res.json({ valid: true, user: { id: "demo-user", name: "Demo User" } });
+  } else {
+    res.json({ valid: false, error: "Invalid connection key" });
+  }
 });
 
 app.get("/v1/items", (req, res) => {
@@ -167,26 +262,19 @@ app.get("/v1/items", (req, res) => {
 
 app.post("/v1/:itemType/create", (req, res) => {
   const { itemType } = req.params;
+  const validTypes = ["system-prompt", "slash-command", "agent-skill", "agent-flow"];
   
-  if (!ITEMS[itemType]) {
+  if (!validTypes.includes(itemType)) {
     return res.status(400).json({ error: "Invalid item type" });
   }
   
-  const newItem = {
-    id: Date.now().toString(),
-    ...req.body,
-    author: "CodingSoft",
-    visibility: "public",
-    createdAt: new Date().toISOString(),
-  };
-  
-  if (!ITEMS[itemType]) {
-    ITEMS[itemType] = [];
-  }
-  ITEMS[itemType].push(newItem);
+  const newItem = createItem(itemType, req.body);
   
   res.json({
-    item: newItem,
+    item: {
+      ...newItem,
+      tags: typeof newItem.tags === 'string' ? JSON.parse(newItem.tags) : newItem.tags,
+    },
     error: null,
   });
 });
@@ -194,24 +282,17 @@ app.post("/v1/:itemType/create", (req, res) => {
 app.post("/v1/:itemType/:id/update", (req, res) => {
   const { itemType, id } = req.params;
   
-  if (!ITEMS[itemType]) {
-    return res.status(400).json({ error: "Invalid item type" });
-  }
+  const updated = updateItem(itemType, id, req.body);
   
-  const index = ITEMS[itemType].findIndex((i) => i.id === id);
-  
-  if (index === -1) {
+  if (!updated) {
     return res.status(404).json({ error: "Item not found" });
   }
   
-  ITEMS[itemType][index] = {
-    ...ITEMS[itemType][index],
-    ...req.body,
-    updatedAt: new Date().toISOString(),
-  };
-  
   res.json({
-    item: ITEMS[itemType][index],
+    item: {
+      ...updated,
+      tags: typeof updated.tags === 'string' ? JSON.parse(updated.tags) : updated.tags,
+    },
     error: null,
   });
 });
@@ -219,23 +300,17 @@ app.post("/v1/:itemType/:id/update", (req, res) => {
 app.delete("/v1/:itemType/:id", (req, res) => {
   const { itemType, id } = req.params;
   
-  if (!ITEMS[itemType]) {
-    return res.status(400).json({ error: "Invalid item type" });
-  }
+  const deleted = deleteItem(itemType, id);
   
-  const index = ITEMS[itemType].findIndex((i) => i.id === id);
-  
-  if (index === -1) {
+  if (!deleted) {
     return res.status(404).json({ error: "Item not found" });
   }
-  
-  ITEMS[itemType].splice(index, 1);
   
   res.json({ success: true, error: null });
 });
 
 app.listen(PORT, () => {
   console.log(`🚀 Community Hub server running at http://localhost:${PORT}`);
-  console.log(`📦 Available item types: ${Object.keys(ITEMS).join(", ")}`);
+  console.log(`📦 Database: ${DB_PATH}`);
   console.log(`🔗 API Base: http://localhost:${PORT}/v1`);
 });

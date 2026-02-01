@@ -15,10 +15,10 @@ export function useCommunityHubAuth() {
       setLoading(true);
       try {
         const { connectionKey } = await CommunityHub.getSettings();
-        setIsAuthenticated(!!connectionKey);
+        setIsAuthenticated(!!connectionKey || window.__HUB_DEMO_MODE === true);
       } catch (error) {
         console.error("Error checking hub auth:", error);
-        setIsAuthenticated(false);
+        setIsAuthenticated(window.__HUB_DEMO_MODE === true);
       } finally {
         setLoading(false);
       }
@@ -27,4 +27,8 @@ export function useCommunityHubAuth() {
   }, []);
 
   return { isAuthenticated, loading };
+}
+
+export function setHubDemoMode(enabled = true) {
+  window.__HUB_DEMO_MODE = enabled;
 }

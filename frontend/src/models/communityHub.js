@@ -201,6 +201,29 @@ const CommunityHub = {
   },
 
   /**
+   * Create a new agent skill in the community hub
+   * @param {Object} data - The agent skill data
+   * @returns {Promise<{success: boolean, error: string | null}>}
+   */
+  createAgentSkill: async (data) => {
+    return await fetch(`${API_BASE}/community-hub/agent-skill/create`, {
+      method: "POST",
+      headers: baseHeaders(),
+      body: JSON.stringify(data),
+    })
+      .then(async (res) => {
+        const response = await res.json();
+        if (!res.ok)
+          throw new Error(response.error || "Failed to create agent skill");
+        return { success: true, error: null, itemId: response.item?.id };
+      })
+      .catch((e) => ({
+        success: false,
+        error: e.message,
+      }));
+  },
+
+  /**
    * Create a new slash command in the community hub
    * @param {Object} data - The slash command data
    * @param {string} data.name - The name of the command
