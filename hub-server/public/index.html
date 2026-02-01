@@ -3,13 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CodingSoft Community Hub</title>
+  <title>Community Hub - CodingSoft</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     :root {
       --bg-dark: #09090b;
-      --bg-card: #18181b;
-      --bg-input: #000000b3;
+      --bg-sidebar: #18181b;
+      --bg-card: #27272a;
+      --bg-hover: #3f3f46;
       --text-primary: #fff;
       --text-secondary: #a1a1aa;
       --text-muted: #71717a;
@@ -24,13 +25,12 @@
       min-height: 100vh;
     }
     .header {
-      background: rgba(0, 0, 0, 0.7);
+      background: var(--bg-sidebar);
       border-bottom: 1px solid var(--border);
       padding: 1rem 1.5rem;
       position: sticky;
       top: 0;
       z-index: 100;
-      backdrop-filter: blur(8px);
     }
     .header-content {
       max-width: 1400px;
@@ -48,92 +48,80 @@
       color: var(--text-primary);
     }
     .logo-icon {
-      width: 36px;
-      height: 36px;
+      width: 32px;
+      height: 32px;
       background: linear-gradient(135deg, var(--primary), #a855f7);
-      border-radius: 8px;
+      border-radius: 6px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.25rem;
+      font-size: 1rem;
     }
     .logo-text {
-      font-size: 1.25rem;
-      font-weight: 700;
-      letter-spacing: -0.025em;
+      font-size: 1.125rem;
+      font-weight: 600;
     }
     .search-container { flex: 1; max-width: 480px; }
     .search-input {
       width: 100%;
-      padding: 0.625rem 1rem;
-      background: var(--bg-input);
+      padding: 0.5rem 0.75rem;
+      background: rgba(0, 0, 0, 0.5);
       border: 1px solid var(--border);
-      border-radius: 8px;
+      border-radius: 6px;
       color: var(--text-primary);
       font-size: 0.875rem;
     }
     .search-input:focus {
       outline: none;
       border-color: var(--primary);
-      box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
     }
     .search-input::placeholder { color: var(--text-muted); }
-    .main { max-width: 1400px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
-    .section-header { margin-bottom: 2rem; }
-    .section-title { font-size: 1.125rem; font-semibold; color: var(--text-primary); margin-bottom: 0.5rem; }
+    .main { max-width: 1400px; margin: 0 auto; padding: 1.5rem; }
+    .section-header { margin-bottom: 1.5rem; }
+    .section-title { font-size: 1.5rem; font-bold; color: var(--text-primary); margin-bottom: 0.25rem; }
     .section-subtitle { font-size: 0.875rem; color: var(--text-secondary); }
-    .category { margin-bottom: 2.5rem; }
+    .category { margin-bottom: 2rem; }
     .category-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 1rem;
-      padding-bottom: 0.75rem;
-      border-bottom: 1px solid var(--border);
+      margin-bottom: 0.75rem;
     }
-    .category-title { font-size: 1rem; font-medium; color: var(--text-primary); text-transform: capitalize; }
+    .category-title { font-size: 1.125rem; font-semibold; color: var(--text-primary); text-transform: capitalize; }
     .category-more { color: var(--primary); font-size: 0.875rem; text-decoration: none; font-weight: 500; }
     .category-more:hover { color: var(--primary-hover); }
-    .items-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 0.75rem; }
+    .items-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 0.5rem; }
     .item-card {
       background: rgba(0, 0, 0, 0.7);
       border: 1px solid transparent;
-      border-radius: 12px;
-      padding: 1rem;
+      border-radius: 8px;
+      padding: 0.75rem;
       cursor: pointer;
       transition: all 0.2s;
       text-decoration: none;
       display: block;
     }
-    .item-card:hover { background: rgba(0, 0, 0, 0.85); border-color: var(--border); }
-    .item-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
-    .item-name { font-size: 0.875rem; font-medium; color: var(--text-primary); flex: 1; }
-    .visibility-badge {
-      font-size: 0.625rem;
-      color: var(--text-muted);
-      padding: 0.125rem 0.375rem;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      text-transform: uppercase;
+    .item-card:hover {
+      background: rgba(0, 0, 0, 0.85);
+      border-color: var(--border);
     }
+    .item-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem; }
+    .item-name { font-size: 0.875rem; font-medium; color: var(--text-primary); flex: 1; }
+    .visibility-icon { width: 16px; height: 16px; color: var(--text-muted); }
     .item-description {
       font-size: 0.75rem;
       color: rgba(255, 255, 255, 0.6);
       line-height: 1.4;
-      margin-bottom: 0.75rem;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
+      margin: 0.25rem 0 0.5rem;
     }
-    .item-section { margin-top: 0.75rem; }
+    .item-section { margin-top: 0.5rem; }
     .item-section-label { font-size: 0.75rem; font-semibold; color: rgba(255, 255, 255, 0.6); margin-bottom: 0.25rem; }
     .item-code {
       font-size: 0.75rem;
-      font-family: 'SF Mono', Monaco, monospace;
-      background: rgba(0, 0, 0, 0.6);
+      font-family: 'SF Mono', Monaco, 'Consolas', monospace;
+      background: #18181b;
       padding: 0.375rem 0.5rem;
-      border-radius: 6px;
+      border-radius: 4px;
       border: 1px solid var(--border);
       color: rgba(255, 255, 255, 0.6);
       overflow: hidden;
@@ -142,10 +130,10 @@
     }
     .item-prompt {
       font-size: 0.75rem;
-      font-family: 'SF Mono', Monaco, monospace;
-      background: rgba(0, 0, 0, 0.6);
+      font-family: 'SF Mono', Monaco, 'Consolas', monospace;
+      background: #18181b;
       padding: 0.375rem 0.5rem;
-      border-radius: 6px;
+      border-radius: 4px;
       border: 1px solid var(--border);
       color: rgba(255, 255, 255, 0.6);
       display: -webkit-box;
@@ -153,19 +141,19 @@
       -webkit-box-orient: vertical;
       overflow: hidden;
     }
-    .item-tags { display: flex; flex-wrap: wrap; gap: 0.375rem; margin-top: 0.75rem; }
-    .item-tag { font-size: 0.625rem; color: var(--text-muted); padding: 0.125rem 0.5rem; background: rgba(255, 255, 255, 0.1); border-radius: 9999px; }
     .item-footer {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: 0.75rem;
-      padding-top: 0.75rem;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      justify-content: flex-end;
+      margin-top: 0.5rem;
     }
-    .item-author { font-size: 0.75rem; color: var(--text-muted); }
-    .import-btn { color: var(--primary); font-size: 0.75rem; font-weight: 500; padding: 0.375rem 0.75rem; background: rgba(0, 0, 0, 0.4); border-radius: 6px; text-decoration: none; }
-    .import-btn:hover { background: rgba(0, 0, 0, 0.6); color: var(--primary-hover); }
+    .import-btn {
+      color: var(--primary);
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .import-btn:hover { color: var(--primary-hover); }
     .modal-overlay {
       display: none;
       position: fixed;
@@ -181,15 +169,15 @@
     }
     .modal-overlay.active { display: flex; }
     .modal {
-      background: var(--bg-card);
-      border-radius: 16px;
+      background: var(--bg-sidebar);
+      border-radius: 12px;
       max-width: 520px;
       width: 100%;
       max-height: 85vh;
       overflow-y: auto;
     }
     .modal-header {
-      padding: 1.25rem;
+      padding: 1rem;
       border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
@@ -197,34 +185,43 @@
     }
     .modal-title { font-size: 1rem; font-semibold; color: var(--text-primary); }
     .modal-close {
-      width: 32px;
-      height: 32px;
+      width: 28px;
+      height: 28px;
       background: rgba(0, 0, 0, 0.5);
       border: 1px solid var(--border);
-      border-radius: 6px;
+      border-radius: 4px;
       color: var(--text-secondary);
       cursor: pointer;
-      font-size: 1.25rem;
+      font-size: 1rem;
     }
     .modal-close:hover { background: rgba(0, 0, 0, 0.7); color: var(--text-primary); }
-    .modal-body { padding: 1.25rem; }
-    .modal-description { font-size: 0.875rem; color: rgba(255, 255, 255, 0.6); line-height: 1.5; margin-bottom: 1.25rem; }
-    .modal-section { margin-bottom: 1.25rem; }
+    .modal-body { padding: 1rem; }
+    .modal-description { font-size: 0.875rem; color: rgba(255, 255, 255, 0.6); line-height: 1.5; margin-bottom: 1rem; }
+    .modal-section { margin-bottom: 1rem; }
     .modal-section-label { font-size: 0.75rem; font-weight: 600; color: rgba(255, 255, 255, 0.6); text-transform: uppercase; margin-bottom: 0.5rem; }
     .modal-code {
       font-size: 0.8125rem;
-      font-family: 'SF Mono', Monaco, monospace;
-      background: rgba(0, 0, 0, 0.6);
-      padding: 0.75rem 1rem;
-      border-radius: 8px;
+      font-family: 'SF Mono', Monaco, 'Consolas', monospace;
+      background: #18181b;
+      padding: 0.75rem;
+      border-radius: 6px;
       border: 1px solid var(--border);
       color: rgba(255, 255, 255, 0.8);
       white-space: pre-wrap;
-      max-height: 180px;
+      max-height: 150px;
       overflow-y: auto;
     }
-    .modal-actions { display: flex; gap: 0.75rem; padding: 1.25rem; border-top: 1px solid var(--border); }
-    .btn { flex: 1; padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.875rem; font-weight: 500; cursor: pointer; text-align: center; }
+    .modal-actions { display: flex; gap: 0.5rem; padding: 1rem; border-top: 1px solid var(--border); }
+    .btn {
+      flex: 1;
+      padding: 0.625rem 1rem;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+    }
     .btn-secondary { background: rgba(0, 0, 0, 0.4); border: 1px solid var(--border); color: var(--text-primary); }
     .btn-secondary:hover { background: rgba(0, 0, 0, 0.6); }
     .btn-primary { background: var(--primary); border: none; color: white; }
@@ -236,7 +233,7 @@
       transform: translateX(-50%) translateY(100px);
       background: #22c55e;
       color: white;
-      padding: 0.875rem 1.5rem;
+      padding: 0.75rem 1.25rem;
       border-radius: 8px;
       font-size: 0.875rem;
       font-weight: 500;
@@ -246,11 +243,10 @@
     }
     .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
     .empty-state { text-align: center; padding: 4rem 2rem; color: var(--text-muted); }
-    .empty-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.5; }
     @media (max-width: 640px) {
       .header-content { flex-wrap: wrap; }
-      .search-container { order: 3; max-width: 100%; width: 100%; }
-      .main { padding: 1.5rem 1rem 3rem; }
+      .search-container { order: 3; max-width: 100%; width: 100%; margin-top: 0.5rem; }
+      .main { padding: 1rem; }
       .items-grid { grid-template-columns: 1fr; }
     }
   </style>
@@ -332,7 +328,7 @@
       const container = document.getElementById('categoriesContainer');
       const categories = Object.keys(allItems).filter(type => allItems[type].length > 0);
       if (categories.length === 0) {
-        container.innerHTML = '<div class="empty-state"><div class="empty-icon">🔍</div><p>No items found</p></div>';
+        container.innerHTML = '<div class="empty-state"><p>No items found</p></div>';
         return;
       }
       container.innerHTML = categories.map(type => `
@@ -348,11 +344,15 @@
 
     function renderCard(type, item) {
       const importId = item.importId || `allm-community-id:${type.replace(/s$/, '')}:${item.id}`;
+      const visibilityIcon = item.visibility === 'private' 
+        ? '<svg class="visibility-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>'
+        : '<svg class="visibility-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>';
+      
       return `
         <a href="/import/${slugify(readableType(type))}?id=${importId}" class="item-card" onclick="event.preventDefault(); showItem('${type}', '${item.id}')">
           <div class="item-header">
             <span class="item-name">${item.name}</span>
-            <span class="visibility-badge">${item.visibility || 'public'}</span>
+            ${visibilityIcon}
           </div>
           <p class="item-description">${item.description}</p>
           ${type === 'slashCommands' ? `
@@ -360,7 +360,6 @@
           ` : ''}
           <div class="item-section"><div class="item-section-label">${type === 'systemPrompts' ? 'Prompt' : 'Config'}</div><div class="item-prompt">${item.prompt || item.config || ''}</div></div>
           <div class="item-footer">
-            <span class="item-author">${item.author || 'Unknown'}</span>
             <span class="import-btn">Import →</span>
           </div>
         </a>
