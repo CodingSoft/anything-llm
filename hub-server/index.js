@@ -166,18 +166,13 @@ app.get("/v1/items", (req, res) => {
 
 app.post("/v1/:itemType/create", (req, res) => {
   const { itemType } = req.params;
-  const authHeader = req.headers.authorization;
-  
-  if (!authHeader) {
-    return res.status(401).json({ error: "Authorization required" });
-  }
   
   if (!ITEMS[itemType]) {
     return res.status(400).json({ error: "Invalid item type" });
   }
   
   const newItem = {
-    id: uuidv4(),
+    id: Date.now().toString(),
     ...req.body,
     author: "CodingSoft",
     visibility: "public",
@@ -193,6 +188,49 @@ app.post("/v1/:itemType/create", (req, res) => {
     item: newItem,
     error: null,
   });
+});
+
+app.post("/v1/:itemType/:id/update", (req, res) => {
+  const { itemType, id } = req.params;
+  
+  if (!ITEMS[itemType]) {
+    return res.status(400).json({ error: "Invalid item type" });
+  }
+  
+  const index = ITEMS[itemType].findIndex((i) => i.id === id);
+  
+  if (index === -1) {
+    return res.status(404).json({ error: "Item not found" });
+  }
+  
+  ITEMS[itemType][index] = {
+    ...ITEMS[itemType][index],
+    ...req.body,
+    updatedAt: new Date().toISOString(),
+  };
+  
+  res.json({
+    item: ITEMS[itemType][index],
+    error: null,
+  });
+});
+
+app.delete("/v1/:itemType/:id", (req, res) => {
+  const { itemType, id } = req.params;
+  
+  if (!ITEMS[itemType]) {
+    return res.status(400).json({ error: "Invalid item type" });
+  }
+  
+  const index = ITEMS[itemType].findIndex((i) => i.id === id);
+  
+  if (index === -1) {
+    return res.status(404).json({ error: "Item not found" });
+  }
+  
+  ITEMS[itemType].splice(index, 1);
+  
+  res.json({ success: true, error: null });
 });
 
 app.listen(PORT, () => {

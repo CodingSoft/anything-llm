@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Community Hub Admin - CodingSoft</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg-dark: #09090b;
+      --bg-sidebar: #18181b;
+      --bg-card: #27272a;
+      --text-primary: #fff;
+      --text-secondary: #a1a1aa;
+      --border: #3f3f46;
+      --primary: #6366f1;
+      --danger: #ef4444;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-primary);
+      min-height: 100vh;
+    }
+    .header {
+      background: var(--bg-sidebar);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 1.5rem;
+    }
+    .header-content { max-width: 1400px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
+    .logo { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; color: var(--text-primary); }
+    .logo-icon { width: 32px; height: 32px; background: linear-gradient(135deg, var(--primary), #a855f7); border-radius: 6px; display: flex; align-items: center; justify-content: center; }
+    .logo-text { font-size: 1.125rem; font-weight: 600; }
+    .main { max-width: 1400px; margin: 0 auto; padding: 1.5rem; }
+    .page-title { font-size: 1.5rem; font-bold; margin-bottom: 1.5rem; }
+    .tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem; }
+    .tab { padding: 0.5rem 1rem; background: transparent; border: 1px solid var(--border); border-radius: 6px; color: var(--text-secondary); cursor: pointer; font-size: 0.875rem; }
+    .tab:hover { background: var(--bg-card); }
+    .tab.active { background: var(--primary); border-color: var(--primary); color: white; }
+    .form-card { background: var(--bg-sidebar); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; }
+    .form-title { font-size: 1rem; font-semibold; margin-bottom: 1rem; }
+    .form-group { margin-bottom: 1rem; }
+    .form-label { display: block; font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 0.5rem; }
+    .form-input, .form-textarea, .form-select {
+      width: 100%;
+      padding: 0.625rem 0.75rem;
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-primary);
+      font-size: 0.875rem;
+    }
+    .form-input:focus, .form-textarea:focus, .form-select:focus { outline: none; border-color: var(--primary); }
+    .form-textarea { min-height: 100px; resize: vertical; font-family: monospace; }
+    .btn { padding: 0.625rem 1.25rem; border-radius: 6px; font-size: 0.875rem; font-weight: 500; cursor: pointer; border: none; transition: all 0.2s; }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: #4f46e5; }
+    .btn-danger { background: var(--danger); color: white; }
+    .btn-danger:hover { background: #dc2626; }
+    .btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--text-primary); }
+    .btn-secondary:hover { background: var(--bg-card); }
+    .items-list { display: flex; flex-direction: column; gap: 0.5rem; }
+    .item-row { display: flex; align-items: center; gap: 1rem; padding: 0.75rem; background: var(--bg-sidebar); border: 1px solid var(--border); border-radius: 8px; }
+    .item-info { flex: 1; }
+    .item-name { font-size: 0.875rem; font-weight: 500; }
+    .item-desc { font-size: 0.75rem; color: var(--text-secondary); }
+    .item-actions { display: flex; gap: 0.5rem; }
+    .btn-sm { padding: 0.375rem 0.75rem; font-size: 0.75rem; }
+    .section { display: none; }
+    .section.active { display: block; }
+    .empty-state { text-align: center; padding: 3rem; color: var(--text-secondary); }
+    .toast {
+      position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(100px);
+      background: #22c55e; color: white; padding: 0.75rem 1.25rem; border-radius: 8px;
+      font-size: 0.875rem; font-weight: 500; opacity: 0; transition: all 0.3s; z-index: 2000;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-content">
+      <a href="/" class="logo">
+        <div class="logo-icon">⚡</div>
+        <span class="logo-text">Community Hub Admin</span>
+      </a>
+    </div>
+  </header>
+
+  <main class="main">
+    <h1 class="page-title">Gestionar Community Hub</h1>
+    
+    <div class="tabs">
+      <button class="tab active" onclick="showSection('system-prompt')">System Prompts</button>
+      <button class="tab" onclick="showSection('slash-command')">Slash Commands</button>
+      <button class="tab" onclick="showSection('agent-skill')">Agent Skills</button>
+      <button class="tab" onclick="showSection('agent-flow')">Agent Flows</button>
+    </div>
+
+    <div class="form-card">
+      <h3 class="form-title" id="formTitle">Crear nuevo System Prompt</h3>
+      <form id="itemForm" onsubmit="saveItem(event)">
+        <input type="hidden" id="itemId">
+        <div class="form-group">
+          <label class="form-label">Nombre</label>
+          <input type="text" id="itemName" class="form-input" placeholder="Ej: Creative Writer" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Descripción</label>
+          <input type="text" id="itemDescription" class="form-input" placeholder="Describe el propósito..." required>
+        </div>
+        <div class="form-group" id="commandGroup" style="display: none;">
+          <label class="form-label">Comando</label>
+          <input type="text" id="itemCommand" class="form-input" placeholder="Ej: /traducir">
+        </div>
+        <div class="form-group">
+          <label class="form-label" id="promptLabel">Prompt</label>
+          <textarea id="itemPrompt" class="form-textarea" placeholder="Escribe el prompt..." required></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tags (separados por coma)</label>
+          <input type="text" id="itemTags" class="form-input" placeholder="writing, creative, general">
+        </div>
+        <button type="submit" class="btn btn-primary" id="submitBtn">Crear</button>
+        <button type="button" class="btn btn-secondary" onclick="resetForm()" style="margin-left: 0.5rem;">Cancelar</button>
+      </form>
+    </div>
+
+    <div class="form-card">
+      <h3 class="form-title">Items existentes</h3>
+      <div class="items-list" id="itemsList"></div>
+    </div>
+  </main>
+
+  <div class="toast" id="toast">Guardado correctamente</div>
+
+  <script>
+    const API_BASE = '/v1';
+    let currentType = 'system-prompt';
+    let items = { 'system-prompt': [], 'slash-command': [], 'agent-skill': [], 'agent-flow': [] };
+
+    const typeLabels = { 'system-prompt': 'System Prompt', 'slash-command': 'Slash Command', 'agent-skill': 'Agent Skill', 'agent-flow': 'Agent Flow' };
+    const typePlurals = { 'system-prompt': 'system-prompt', 'slash-command': 'slash-command', 'agent-skill': 'agent-skill', 'agent-flow': 'agent-flow' };
+
+    async function fetchItems() {
+      try {
+        const response = await fetch(`${API_BASE}/explore`);
+        const data = await response.json();
+        items = {
+          'system-prompt': data.systemPrompts?.items || [],
+          'slash-command': data.slashCommands?.items || [],
+          'agent-skill': data.agentSkills?.items || [],
+          'agent-flow': data.agentFlows?.items || []
+        };
+        renderItems();
+      } catch (error) { console.error('Error:', error); }
+    }
+
+    function showSection(type) {
+      currentType = type;
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      event.target.classList.add('active');
+      document.getElementById('commandGroup').style.display = type === 'slash-command' ? 'block' : 'none';
+      document.getElementById('promptLabel').textContent = type === 'system-prompt' ? 'Prompt' : 'Configuración';
+      document.getElementById('formTitle').textContent = `Crear nuevo ${typeLabels[type]}`;
+      document.getElementById('submitBtn').textContent = 'Crear';
+      renderItems();
+    }
+
+    function renderItems() {
+      const list = document.getElementById('itemsList');
+      const typeItems = items[currentType] || [];
+      
+      if (typeItems.length === 0) {
+        list.innerHTML = '<div class="empty-state">No hay items aún</div>';
+        return;
+      }
+      
+      list.innerHTML = typeItems.map(item => `
+        <div class="item-row">
+          <div class="item-info">
+            <div class="item-name">${item.name}</div>
+            <div class="item-desc">${item.description}</div>
+          </div>
+          <div class="item-actions">
+            <button class="btn btn-secondary btn-sm" onclick="editItem('${item.id}')">Editar</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteItem('${item.id}')">Eliminar</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function editItem(id) {
+      const item = items[currentType].find(i => i.id === id);
+      if (!item) return;
+      
+      document.getElementById('itemId').value = item.id;
+      document.getElementById('itemName').value = item.name;
+      document.getElementById('itemDescription').value = item.description;
+      document.getElementById('itemCommand').value = item.command || '';
+      document.getElementById('itemPrompt').value = item.prompt || item.config || '';
+      document.getElementById('itemTags').value = (item.tags || []).join(', ');
+      
+      document.getElementById('formTitle').textContent = `Editar ${typeLabels[currentType]}`;
+      document.getElementById('submitBtn').textContent = 'Actualizar';
+    }
+
+    function resetForm() {
+      document.getElementById('itemForm').reset();
+      document.getElementById('itemId').value = '';
+      document.getElementById('formTitle').textContent = `Crear nuevo ${typeLabels[currentType]}`;
+      document.getElementById('submitBtn').textContent = 'Crear';
+    }
+
+    async function saveItem(event) {
+      event.preventDefault();
+      
+      const id = document.getElementById('itemId').value;
+      const name = document.getElementById('itemName').value;
+      const description = document.getElementById('itemDescription').value;
+      const command = document.getElementById('itemCommand').value;
+      const prompt = document.getElementById('itemPrompt').value;
+      const tags = document.getElementById('itemTags').value.split(',').map(t => t.trim()).filter(t => t);
+      
+      const item = { name, description, command, prompt, tags, visibility: 'public' };
+      
+      if (id) {
+        const index = items[currentType].findIndex(i => i.id === id);
+        if (index !== -1) items[currentType][index] = { ...items[currentType][index], ...item };
+      } else {
+        item.id = Date.now().toString();
+        item.createdAt = new Date().toISOString();
+        item.author = 'CodingSoft';
+        items[currentType].push(item);
+      }
+      
+      resetForm();
+      renderItems();
+      showToast(id ? 'Actualizado correctamente' : 'Creado correctamente');
+    }
+
+    async function deleteItem(id) {
+      if (!confirm('¿Eliminar este item?')) return;
+      items[currentType] = items[currentType].filter(i => i.id !== id);
+      renderItems();
+      showToast('Eliminado correctamente');
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    fetchItems();
+  </script>
+</body>
+</html>
