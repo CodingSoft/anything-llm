@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CodingSoft Community Hub</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --bg-dark: #0f172a;
+      --bg-card: #1e293b;
+      --bg-card-hover: #334155;
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --border: #334155;
+      --success: #22c55e;
+      --accent: #818cf8;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-primary);
+      min-height: 100vh;
+    }
+    .header {
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .header-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      text-decoration: none;
+    }
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+    }
+    .search-bar { flex: 1; max-width: 500px; margin: 0 2rem; }
+    .search-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: var(--bg-dark);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text-primary);
+      font-size: 1rem;
+    }
+    .search-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+    }
+    .search-input::placeholder { color: var(--text-secondary); }
+    .tabs {
+      display: flex;
+      gap: 0.5rem;
+      padding: 1rem 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .tab {
+      padding: 0.75rem 1.5rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    .tab:hover { background: var(--bg-card-hover); color: var(--text-primary); }
+    .tab.active { background: var(--primary); border-color: var(--primary); color: white; }
+    .tab .count {
+      background: rgba(255,255,255,0.2);
+      padding: 0.125rem 0.5rem;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      margin-left: 0.5rem;
+    }
+    .main { max-width: 1400px; margin: 0 auto; padding: 1rem 2rem 4rem; }
+    .section-title { font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; }
+    .items-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1rem;
+    }
+    .item-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .item-card:hover {
+      background: var(--bg-card-hover);
+      transform: translateY(-2px);
+    }
+    .item-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+    }
+    .item-icon {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+    }
+    .item-type {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      background: rgba(99, 102, 241, 0.2);
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+    }
+    .item-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .item-description {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: 1rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .item-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .tag {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      background: rgba(255,255,255,0.1);
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+    }
+    .item-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+    }
+    .item-author {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .author-avatar {
+      width: 24px;
+      height: 24px;
+      background: var(--primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+    .import-btn {
+      padding: 0.5rem 1rem;
+      background: var(--primary);
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .import-btn:hover { background: var(--primary-dark); }
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal {
+      background: var(--bg-card);
+      border-radius: 16px;
+      max-width: 600px;
+      width: 100%;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    .modal-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .modal-title { font-size: 1.25rem; font-weight: 600; }
+    .modal-close {
+      width: 36px;
+      height: 36px;
+      background: var(--bg-dark);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 1.25rem;
+    }
+    .modal-body { padding: 1.5rem; }
+    .modal-icon {
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .modal-description { color: var(--text-secondary); line-height: 1.6; margin-bottom: 1.5rem; }
+    .modal-section { margin-bottom: 1.5rem; }
+    .modal-section-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+    .prompt-box {
+      background: var(--bg-dark);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      font-family: monospace;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    .modal-actions {
+      display: flex;
+      gap: 1rem;
+      padding: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+    .btn {
+      flex: 1;
+      padding: 0.875rem 1.5rem;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      text-align: center;
+    }
+    .btn-primary { background: var(--primary); border: none; color: white; }
+    .btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--text-primary); }
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--success);
+      color: white;
+      padding: 1rem 2rem;
+      border-radius: 10px;
+      font-weight: 500;
+      opacity: 0;
+      transition: all 0.3s;
+      z-index: 2000;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+    .empty-state { text-align: center; padding: 4rem 2rem; color: var(--text-secondary); }
+    .empty-icon { font-size: 4rem; margin-bottom: 1rem; opacity: 0.5; }
+    @media (max-width: 768px) {
+      .header-content { flex-wrap: wrap; gap: 1rem; }
+      .search-bar { order: 3; margin: 0; max-width: 100%; }
+      .tabs { overflow-x: auto; padding: 1rem; }
+      .main { padding: 1rem; }
+      .items-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-content">
+      <a href="/" class="logo">
+        <div class="logo-icon">⚡</div>
+        CodingSoft Hub
+      </a>
+      <div class="search-bar">
+        <input type="text" class="search-input" id="searchInput" placeholder="Buscar prompts, comandos, agents...">
+      </div>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab active" data-type="all">Todos <span class="count" id="countAll">0</span></button>
+    <button class="tab" data-type="system-prompt">Prompts <span class="count" id="countSystemPrompt">0</span></button>
+    <button class="tab" data-type="slash-command">Comandos <span class="count" id="countSlashCommand">0</span></button>
+    <button class="tab" data-type="agent-skill">Skills <span class="count" id="countAgentSkill">0</span></button>
+    <button class="tab" data-type="agent-flow">Flows <span class="count" id="countAgentFlow">0</span></button>
+  </nav>
+
+  <main class="main">
+    <h2 class="section-title" id="sectionTitle">Explorar items</h2>
+    <div class="items-grid" id="itemsGrid"></div>
+  </main>
+
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modalTitle">Item Title</h3>
+        <button class="modal-close" onclick="closeModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-icon" id="modalIcon">⚡</div>
+        <p class="modal-description" id="modalDescription">Description</p>
+        <div class="modal-section" id="commandSection" style="display: none;">
+          <div class="modal-section-title">Comando</div>
+          <div class="prompt-box" id="modalCommand">/command</div>
+        </div>
+        <div class="modal-section">
+          <div class="modal-section-title" id="promptTitle">Prompt</div>
+          <div class="prompt-box" id="modalPrompt">Prompt content</div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+        <button class="btn btn-primary" onclick="importItem()">Importar a CodingSoft</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Importado correctamente</div>
+
+  <script>
+    const API_BASE = '/v1';
+    let allItems = { systemPrompts: [], slashCommands: [], agentSkills: [], agentFlows: [] };
+    let currentType = 'all';
+    let selectedItem = null;
+
+    async function fetchItems() {
+      try {
+        const response = await fetch(`${API_BASE}/explore`);
+        const data = await response.json();
+        allItems = {
+          'system-prompt': data.systemPrompts?.items || [],
+          'slash-command': data.slashCommands?.items || [],
+          'agent-skill': data.agentSkills?.items || [],
+          'agent-flow': data.agentFlows?.items || []
+        };
+        updateCounts();
+        renderItems();
+      } catch (error) {
+        console.error('Error fetching items:', error);
+      }
+    }
+
+    function updateCounts() {
+      document.getElementById('countAll').textContent = Object.values(allItems).flat().length;
+      document.getElementById('countSystemPrompt').textContent = allItems['system-prompt'].length;
+      document.getElementById('countSlashCommand').textContent = allItems['slash-command'].length;
+      document.getElementById('countAgentSkill').textContent = allItems['agent-skill'].length;
+      document.getElementById('countAgentFlow').textContent = allItems['agent-flow'].length;
+    }
+
+    function getFilteredItems() {
+      const search = document.getElementById('searchInput').value.toLowerCase();
+      let items = currentType === 'all' 
+        ? Object.entries(allItems).flatMap(([type, arr]) => arr.map(i => ({...i, itemType: type})))
+        : allItems[currentType].map(i => ({...i, itemType: currentType}));
+      
+      if (search) {
+        items = items.filter(item => 
+          item.name?.toLowerCase().includes(search) ||
+          item.description?.toLowerCase().includes(search) ||
+          item.tags?.some(t => t.toLowerCase().includes(search))
+        );
+      }
+      return items;
+    }
+
+    function renderItems() {
+      const grid = document.getElementById('itemsGrid');
+      const items = getFilteredItems();
+      
+      if (items.length === 0) {
+        grid.innerHTML = '<div class="empty-state"><div class="empty-icon">🔍</div><p>No se encontraron items</p></div>';
+        return;
+      }
+
+      const typeLabels = {'system-prompt': 'Prompt', 'slash-command': 'Comando', 'agent-skill': 'Skill', 'agent-flow': 'Flow'};
+      const typeIcons = {'system-prompt': '📝', 'slash-command': '⚡', 'agent-skill': '🎯', 'agent-flow': '🔄'};
+
+      grid.innerHTML = items.map(item => `
+        <div class="item-card" onclick="showItem('${item.itemType}', '${item.id}')">
+          <div class="item-header">
+            <div class="item-icon">${typeIcons[item.itemType] || '📦'}</div>
+            <span class="item-type">${typeLabels[item.itemType] || item.itemType}</span>
+          </div>
+          <h3 class="item-title">${item.name}</h3>
+          <p class="item-description">${item.description}</p>
+          <div class="item-tags">${(item.tags || []).map(tag => `<span class="tag">${tag}</span>`).join('')}</div>
+          <div class="item-footer">
+            <div class="item-author"><div class="author-avatar">${(item.author || 'U')[0]}</div>${item.author || 'Unknown'}</div>
+            <button class="import-btn" onclick="event.stopPropagation(); showItem('${item.itemType}', '${item.id}')">Ver más</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function showItem(type, id) {
+      const item = allItems[type]?.find(i => i.id === id);
+      if (!item) return;
+      selectedItem = {...item, itemType: type};
+      document.getElementById('modalTitle').textContent = item.name;
+      document.getElementById('modalDescription').textContent = item.description;
+      document.getElementById('modalIcon').textContent = type === 'system-prompt' ? '📝' : type === 'slash-command' ? '⚡' : type === 'agent-skill' ? '🎯' : '🔄';
+      
+      if (type === 'slash-command') {
+        document.getElementById('commandSection').style.display = 'block';
+        document.getElementById('modalCommand').textContent = item.command || '';
+        document.getElementById('promptTitle').textContent = 'Respuesta del comando';
+      } else {
+        document.getElementById('commandSection').style.display = 'none';
+        document.getElementById('promptTitle').textContent = type === 'system-prompt' ? 'Prompt del sistema' : 'Configuración';
+      }
+      document.getElementById('modalPrompt').textContent = item.prompt || item.config || JSON.stringify(item, null, 2);
+      document.getElementById('modalOverlay').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('modalOverlay').classList.remove('active');
+      selectedItem = null;
+    }
+
+    async function importItem() {
+      if (!selectedItem) return;
+      const importId = \`allm-community-id:\${selectedItem.itemType}:\${selectedItem.id}\`;
+      closeModal();
+      showToast('✓ Importado correctamente a CodingSoft');
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        currentType = tab.dataset.type;
+        const labels = {all: 'Explorar items', 'system-prompt': 'System Prompts', 'slash-command': 'Slash Commands', 'agent-skill': 'Agent Skills', 'agent-flow': 'Agent Flows'};
+        document.getElementById('sectionTitle').textContent = labels[currentType];
+        renderItems();
+      });
+    });
+
+    document.getElementById('searchInput').addEventListener('input', renderItems);
+    document.getElementById('modalOverlay').addEventListener('click', (e) => { if (e.target === document.getElementById('modalOverlay')) closeModal(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+    fetchItems();
+  </script>
+</body>
+</html>

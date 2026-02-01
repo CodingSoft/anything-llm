@@ -182,7 +182,7 @@ export default {
   communityHub: {
     website: () => {
       return import.meta.env.DEV
-        ? `http://localhost:5173`
+        ? `http://localhost:5001`
         : `https://hub.codingsoft.com`;
     },
     /**
