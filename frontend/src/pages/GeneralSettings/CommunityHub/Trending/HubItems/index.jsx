@@ -12,6 +12,24 @@ const DEFAULT_EXPLORE_ITEMS = {
   slashCommands: { items: [], hasMore: false, totalCount: 0 },
 };
 
+function typeToImportPrefix(type) {
+  const map = {
+    'systemPrompts': 'system-prompt',
+    'slashCommands': 'slash-command',
+    'agentSkills': 'agent-skill',
+    'agentFlows': 'agent-flow',
+  };
+  return map[type] || type;
+}
+
+function addImportIdToItems(items, type) {
+  const prefix = typeToImportPrefix(type);
+  return items.map((item) => ({
+    ...item,
+    importId: item.importId || `allm-community-id:${prefix}:${item.id}`,
+  }));
+}
+
 function useCommunityHubExploreItems() {
   const [loading, setLoading] = useState(true);
   const [exploreItems, setExploreItems] = useState(DEFAULT_EXPLORE_ITEMS);
@@ -20,7 +38,14 @@ function useCommunityHubExploreItems() {
       setLoading(true);
       try {
         const { success, result } = await CommunityHub.fetchExploreItems();
-        if (success) setExploreItems(result || DEFAULT_EXPLORE_ITEMS);
+        if (success && result) {
+          const itemsWithImportId = {
+            agentSkills: { items: addImportIdToItems(result.agentSkills?.items || [], 'agentSkills'), hasMore: result.agentSkills?.hasMore || false, totalCount: result.agentSkills?.totalCount || 0 },
+            systemPrompts: { items: addImportIdToItems(result.systemPrompts?.items || [], 'systemPrompts'), hasMore: result.systemPrompts?.hasMore || false, totalCount: result.systemPrompts?.totalCount || 0 },
+            slashCommands: { items: addImportIdToItems(result.slashCommands?.items || [], 'slashCommands'), hasMore: result.slashCommands?.hasMore || false, totalCount: result.slashCommands?.totalCount || 0 },
+          };
+          setExploreItems(itemsWithImportId);
+        }
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {

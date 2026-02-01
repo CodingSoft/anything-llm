@@ -2,14 +2,32 @@ import CommunityHubImportItemSteps from "..";
 import CTAButton from "@/components/lib/CTAButton";
 import paths from "@/utils/paths";
 import showToast from "@/utils/toast";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ArrowSquareOut } from "@phosphor-icons/react";
 
 export default function Introduction({ settings, setSettings, setStep }) {
-  const [itemId, setItemId] = useState(settings.itemId);
-  
+  const [itemId, setItemId] = useState(settings.itemId || "");
+
+  useEffect(() => {
+    if (settings.itemId && !itemId) {
+      setItemId(settings.itemId);
+    }
+  }, [settings.itemId]);
+
+  useEffect(() => {
+    if (itemId && itemId.startsWith("allm-community-id:") && itemId !== "") {
+      const timer = setTimeout(() => {
+        handleContinue();
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [itemId]);
+
   const handleContinue = () => {
-    if (!itemId) return showToast("Please enter an item ID", "error");
+    if (!itemId || !itemId.startsWith("allm-community-id:")) {
+      if (!itemId) return;
+      return showToast("Please enter a valid Import ID", "error");
+    }
     setSettings((prev) => ({ ...prev, itemId }));
     setStep(CommunityHubImportItemSteps.itemId.next());
   };
@@ -24,6 +42,8 @@ export default function Introduction({ settings, setSettings, setStep }) {
       if (clipboard.startsWith('allm-community-id:')) {
         setItemId(clipboard);
         showToast("Import ID pasted from clipboard", "success");
+      } else {
+        setItemId(clipboard);
       }
     } catch (e) {
       console.error("Failed to read clipboard:", e);

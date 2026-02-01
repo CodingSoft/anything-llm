@@ -52,14 +52,14 @@ export function CommunityHubImportItemLayout({ setStep, children }) {
   });
 
   useEffect(() => {
-    function autoForward() {
-      if (query.get("id")) {
-        setSettings({ itemId: query.get("id") });
-        setStep(CommunityHubImportItemSteps.itemId.next());
+    function initFromQuery() {
+      const id = query.get("id");
+      if (id && id.startsWith("allm-community-id:")) {
+        setSettings((prev) => ({ ...prev, itemId: id }));
       }
     }
-    autoForward();
-  }, []);
+    initFromQuery();
+  }, [query]);
 
   return (
     <div className="w-screen h-screen overflow-hidden bg-theme-bg-container flex md:mt-0 mt-6">
