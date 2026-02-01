@@ -144,6 +144,7 @@ app.get("/v1/:itemType/:id/pull", (req, res) => {
   res.json({
     item: {
       ...item,
+      itemType: itemType,
       importId: `allm-community-id:${itemType}:${item.id}`,
     },
     url: null,
