@@ -114,12 +114,12 @@ function TelemetryLogs({ settings }) {
             telemetry all we ask is to consider sending us feedback and thoughts
             so that we can continue to improve AnythingLLM for you.{" "}
             <a
-              href="mailto:team@mintplexlabs.com"
+              href="mailto:team@codingsoft.com"
               className="underline text-blue-400"
               target="_blank"
               rel="noreferrer"
             >
-              team@mintplexlabs.com
+              team@codingsoft.com
             </a>
             .
           </p>

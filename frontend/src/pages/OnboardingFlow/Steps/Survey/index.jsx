@@ -132,7 +132,7 @@ export default function Survey({ setHeader, setForwardBtn, setBackBtn }) {
               href={paths.mailToMintplex()}
               className="text-sky-400 underline text-xs"
             >
-              team@mintplexlabs.com
+              team@codingsoft.com
             </a>
           </div>
         </div>

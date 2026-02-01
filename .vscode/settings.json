@@ -60,5 +60,18 @@
     "Zilliz"
   ],
   "eslint.experimental.useFlatConfig": true,
-  "docker.languageserver.formatter.ignoreMultilineInstructions": true
+  "docker.languageserver.formatter.ignoreMultilineInstructions": true,
+  "yaml.schemas": {
+    "file:///Users/codingsoft/.vscode/extensions/continue.continue-1.2.11-darwin-arm64/config-yaml-schema.json": [
+      ".continue/**/*.yaml"
+    ],
+    "file:///Users/codingsoft/.vscode/extensions/continue.continue-1.2.14-darwin-arm64/config-yaml-schema.json": [
+      ".continue/**/*.yaml"
+    ],
+    "file:///Users/codingsoft/.vscode/extensions/continue.continue-1.3.29-darwin-arm64/config-yaml-schema.json": [
+      ".continue/**/*.yaml",
+      "file:///Users/codingsoft/.continue/agents/mistral-agents.yaml",
+      "file:///Users/codingsoft/.continue/config.yaml"
+    ]
+  }
 }
