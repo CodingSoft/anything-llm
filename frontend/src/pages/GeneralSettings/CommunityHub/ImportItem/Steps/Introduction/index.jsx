@@ -3,7 +3,7 @@ import CTAButton from "@/components/lib/CTAButton";
 import paths from "@/utils/paths";
 import showToast from "@/utils/toast";
 import { useState } from "react";
-import { ExternalLink } from "@phosphor-icons/react";
+import { ArrowSquareOut } from "@phosphor-icons/react";
 
 export default function Introduction({ settings, setSettings, setStep }) {
   const [itemId, setItemId] = useState(settings.itemId);
@@ -61,7 +61,7 @@ export default function Introduction({ settings, setSettings, setStep }) {
                 onClick={handleBrowseHub}
                 className="flex items-center gap-2 text-yellow-100 light:text-orange-500 font-semibold hover:underline"
               >
-                <ExternalLink className="w-4 h-4" />
+                <ArrowSquareOut className="w-4 h-4" />
                 Open Community Hub Browser →
               </button>
             </div>
