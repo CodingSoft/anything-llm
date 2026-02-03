@@ -27,12 +27,51 @@ Un servidor local de Community Hub para AnythingLLM que permite gestionar, compa
 
 ## 🚀 Instalación
 
-### Requisitos Previos
+### Opción A: Docker Compose (Recomendado) 🐳
 
+La forma más fácil y completa de ejecutar AnythingLLM + Community Hub juntos.
+
+**Requisitos:**
+- Docker y Docker Compose
+
+**Pasos:**
+
+1. **Desde la raíz del proyecto**:
+```bash
+cd anything-llm
+```
+
+2. **Iniciar servicios**:
+```bash
+# Usando el helper script
+./docker-helper.sh start
+
+# O con docker-compose directamente
+docker-compose up -d
+```
+
+3. **Acceder a las aplicaciones**:
+- **AnythingLLM**: http://localhost:3001
+- **Community Hub**: http://localhost:5001
+- **Hub Admin**: http://localhost:5001/admin
+
+4. **Gestión con helper script**:
+```bash
+./docker-helper.sh status    # Ver estado
+./docker-helper.sh logs      # Ver logs
+./docker-helper.sh stop      # Detener
+./docker-helper.sh update    # Actualizar
+```
+
+### Opción B: Instalación Manual (Node.js)
+
+Para desarrollo o si prefieres no usar Docker.
+
+**Requisitos:**
 - Node.js 18+ 
 - AnythingLLM instalado y configurado
 
-### Pasos de Instalación
+**Pasos:**
 
 1. **Clonar o navegar al directorio**:
 ```bash
@@ -313,3 +352,78 @@ Este proyecto es parte de AnythingLLM y sigue sus términos de licencia.
 ---
 
 **Desarrollado por CodingSoft** ⚡
+
+## 🐳 Docker y Container Registry
+
+### Imagen Docker Oficial
+
+La imagen Docker está disponible en **GitHub Container Registry**:
+
+```bash
+# Pull la imagen
+docker pull ghcr.io/codingsoft/community-hub:1.1.0
+
+# Ejecutar standalone
+docker run -p 5001:5001 -v hub-data:/data ghcr.io/codingsoft/community-hub:1.1.0
+```
+
+**Tags disponibles:**
+- `ghcr.io/codingsoft/community-hub:1.1.0` - Versión específica
+- `ghcr.io/codingsoft/community-hub:latest` - Última versión
+
+### Construir Imagen Local
+
+```bash
+cd hub-server
+docker build -t community-hub:local .
+docker run -p 5001:5001 community-hub:local
+```
+
+### Variables de Entorno Docker
+
+| Variable | Descripción | Default |
+|----------|-------------|---------|
+| `PORT` | Puerto del servidor | `5001` |
+| `DB_PATH` | Ruta de la base de datos | `/data/hub.db` |
+| `COMMUNITY_HUB_IMPORT_PREFIX` | Prefijo de IDs | `allm-community-id` |
+| `NODE_ENV` | Modo de operación | `production` |
+
+### Volúmenes
+
+- `/data` - Base de datos SQLite y archivos persistentes
+
+### Arquitectura Docker Compose
+
+```
+┌─────────────────────────────────────────────┐
+│          Docker Compose Network            │
+│                                             │
+│  ┌──────────────┐    ┌──────────────┐     │
+│  │ AnythingLLM  │◄──►│ Community Hub│     │
+│  │  Port 3001   │    │  Port 5001   │     │
+│  └──────────────┘    └──────────────┘     │
+│                                             │
+└─────────────────────────────────────────────┘
+```
+
+**Ventajas de Docker Compose:**
+- ✅ Ambos servicios orquestados juntos
+- ✅ Networking automática entre servicios
+- ✅ Volúmenes persistentes
+- ✅ Health checks integrados
+- ✅ Fácil actualización y rollback
+- ✅ Escalable horizontalmente
+
+### Publicar tu Propia Imagen
+
+1. **Generar GitHub PAT**:
+   - Ve a: https://github.com/settings/tokens
+   - Scopes: `read:packages`, `write:packages`
+
+2. **Login y Push**:
+```bash
+echo TU_TOKEN | docker login ghcr.io -u TU_USUARIO --password-stdin
+docker build -t ghcr.io/TU_USUARIO/community-hub:1.0.0 .
+docker push ghcr.io/TU_USUARIO/community-hub:1.0.0
+```
+

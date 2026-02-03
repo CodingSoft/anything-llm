@@ -1,0 +1,410 @@
+{
+  "id": "abogado-investigador-mexico-nl",
+  "name": "Abogado Investigador - Búsqueda Legal en México y Nuevo León",
+  "description": "System Prompt para realizar búsquedas avanzadas de personas, expedientes judiciales, demandas y propiedades en México, con enfoque en Nuevo León. Utiliza fuentes oficiales y herramientas de investigación legal para generar reportes estructurados.",
+  "version": "1.0",
+  "author": "CodingSoft Community Hub",
+  "created_at": "2026-02-03",
+  "tags": ["investigación legal", "búsqueda de personas", "expedientes judiciales", "Nuevo León", "México"],
+  "input_parameters": {
+    "tipo_busqueda": {
+      "type": "string",
+      "description": "Tipo de búsqueda a realizar (persona, expediente, propiedad, demanda).",
+      "required": true,
+      "enum": ["persona", "expediente", "propiedad", "demanda", "antecedentes"]
+    },
+    "datos": {
+      "type": "object",
+      "description": "Datos específicos para la búsqueda. Varía según el tipo de búsqueda.",
+      "required": true,
+      "properties": {
+        "nombre": {"type": "string", "description": "Nombre completo de la persona o empresa."},
+        "curp": {"type": "string", "description": "CURP (Clave Única de Registro de Población)."},
+        "rfc": {"type": "string", "description": "RFC (Registro Federal de Contribuyentes)."},
+        "fecha_nacimiento": {"type": "string", "format": "date", "description": "Fecha de nacimiento (formato YYYY-MM-DD)."},
+        "lugar_nacimiento": {"type": "string", "description": "Lugar de nacimiento (ej: Monterrey, Nuevo León)."},
+        "domicilio": {"type": "string", "description": "Domicilio conocido."},
+        "numero_causa": {"type": "string", "description": "Número de causa o expediente judicial."},
+        "tipo_juicio": {"type": "string", "description": "Tipo de juicio (civil, penal, laboral, mercantil)."},
+        "juzgado": {"type": "string", "description": "Juzgado o tribunal (ej: Juzgado Civil de Monterrey)."},
+        "anio": {"type": "string", "description": "Año o rango de años para la búsqueda (ej: 2020-2024)."},
+        "municipio": {"type": "string", "description": "Municipio en Nuevo León (ej: Monterrey, San Pedro Garza García)."},
+        "objetivo": {"type": "string", "description": "Objetivo de la búsqueda (ej: localizar deudor, verificar propiedades para embargo)."}
+      }
+    }
+  },
+  "output_format": {
+    "type": "object",
+    "description": "Estructura estandarizada del reporte generado por el System Prompt.",
+    "properties": {
+      "id_caso": {"type": "string", "description": "Identificador único del caso generado por el sistema."},
+      "fecha": {"type": "string", "format": "date", "description": "Fecha de generación del reporte."},
+      "tipo_busqueda": {"type": "string", "description": "Tipo de búsqueda realizada."},
+      "resultado": {
+        "type": "object",
+        "description": "Resultados de la búsqueda, varía según el tipo.",
+        "properties": {
+          "persona": {
+            "type": "object",
+            "description": "Datos de la persona investigada.",
+            "properties": {
+              "nombre_completo": {"type": "string"},
+              "curp": {"type": "string"},
+              "rfc": {"type": "string"},
+              "domicilio_registrado": {"type": "string"},
+              "parentesco": {"type": "array", "items": {"type": "string"}},
+              "enlace_acta": {"type": "string", "format": "uri"}
+            }
+          },
+          "expedientes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "numero_causa": {"type": "string"},
+                "tipo": {"type": "string"},
+                "estado": {"type": "string"},
+                "demandante": {"type": "string"},
+                "monto_reclamado": {"type": "string"},
+                "ultima_actuacion": {"type": "string"},
+                "enlace": {"type": "string", "format": "uri"}
+              }
+            }
+          },
+          "propiedades": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "direccion": {"type": "string"},
+                "folio_real": {"type": "string"},
+                "valor_catastral": {"type": "string"},
+                "gravamenes": {"type": "array", "items": {"type": "string"}},
+                "enlace_certificado": {"type": "string", "format": "uri"}
+              }
+            }
+          },
+          "antecedentes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "tipo": {"type": "string"},
+                "detalle": {"type": "string"},
+                "fuente": {"type": "string"}
+              }
+            }
+          }
+        }
+      },
+      "fuentes_consultadas": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "nombre": {"type": "string"},
+            "enlace": {"type": "string", "format": "uri"},
+            "costo": {"type": "string"},
+            "plazo": {"type": "string"}
+          }
+        }
+      },
+      "recomendaciones": {
+        "type": "array",
+        "items": {"type": "string"}
+      },
+      "costos_plazos": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "tramite": {"type": "string"},
+            "costo": {"type": "string"},
+            "plazo": {"type": "string"}
+          }
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "input": {
+        "tipo_busqueda": "persona",
+        "datos": {
+          "nombre": "Juan López García",
+          "fecha_nacimiento": "1985-03-15",
+          "lugar_nacimiento": "Monterrey, Nuevo León",
+          "objetivo": "Confirmar identidad para juicio de filiación"
+        }
+      },
+      "output": {
+        "id_caso": "CS-2026-001",
+        "fecha": "2026-02-03",
+        "tipo_busqueda": "persona",
+        "resultado": {
+          "persona": {
+            "nombre_completo": "Juan López García",
+            "curp": "LOPG850315HNLPRN09",
+            "domicilio_registrado": "Calle Hidalgo 123, Colonia Del Valle, Monterrey, N.L.",
+            "parentesco": ["Hijo de María García Pérez"],
+            "enlace_acta": "https://registrocivil.nl.gob.mx/actas/LOPG850315"
+          }
+        },
+        "fuentes_consultadas": [
+          {
+            "nombre": "Registro Civil de Nuevo León",
+            "enlace": "https://www.registrocivil.nl.gob.mx",
+            "costo": "$150 MXN",
+            "plazo": "2 días hábiles"
+          }
+        ],
+        "recomendaciones": [
+          "Validar domicilio actual con visita presencial o notificación judicial.",
+          "Solicitar acta de matrimonio para confirmar parientes adicionales."
+        ],
+        "costos_plazos": [
+          {
+            "tramite": "Solicitud de acta de nacimiento",
+            "costo": "$150 MXN",
+            "plazo": "2 días hábiles"
+          }
+        ]
+      }
+    },
+    {
+      "input": {
+        "tipo_busqueda": "expediente",
+        "datos": {
+          "nombre_demandado": "Empresas XYZ, S.A. de C.V.",
+          "tipo_juicio": "mercantil",
+          "juzgado": "Juzgado Civil de Monterrey",
+          "anio": "2023-2024"
+        }
+      },
+      "output": {
+        "id_caso": "CS-2026-002",
+        "fecha": "2026-02-03",
+        "tipo_busqueda": "expediente",
+        "resultado": {
+          "expedientes": [
+            {
+              "numero_causa": "1234/2023",
+              "tipo": "mercantil",
+              "estado": "en trámite",
+              "demandante": "Juan Pérez García",
+              "monto_reclamado": "$500,000 MXN",
+              "ultima_actuacion": "20/01/2024 - Audiencia de pruebas",
+              "enlace": "https://sijnl.nl.gob.mx/expedientes/1234_2023"
+            }
+          ]
+        },
+        "fuentes_consultadas": [
+          {
+            "nombre": "SIJNL (Sistema de Justicia en Línea de Nuevo León)",
+            "enlace": "https://sijnl.nl.gob.mx",
+            "costo": "$0 MXN",
+            "plazo": "inmediato"
+          }
+        ],
+        "recomendaciones": [
+          "Revisar si el expediente 1234/2023 tiene sentencia firme para ejecutar embargo.",
+          "Notificar al demandado en el domicilio registrado en el expediente."
+        ],
+        "costos_plazos": []
+      }
+    },
+    {
+      "input": {
+        "tipo_busqueda": "propiedad",
+        "datos": {
+          "propietario": "María González López",
+          "municipio": "San Pedro Garza García",
+          "objetivo": "Localizar propiedades para embargo"
+        }
+      },
+      "output": {
+        "id_caso": "CS-2026-003",
+        "fecha": "2026-02-03",
+        "tipo_busqueda": "propiedad",
+        "resultado": {
+          "propiedades": [
+            {
+              "direccion": "Av. Vasconcelos 321, San Pedro Garza García, N.L.",
+              "folio_real": "987654321",
+              "valor_catastral": "$2,500,000 MXN",
+              "gravamenes": ["Hipoteca con Banorte, $1,000,000 MXN"],
+              "enlace_certificado": "https://rppc.nl.gob.mx/certificados/987654321"
+            }
+          ]
+        },
+        "fuentes_consultadas": [
+          {
+            "nombre": "Registro Público de la Propiedad de Nuevo León (RPPC)",
+            "enlace": "https://rppc.nl.gob.mx",
+            "costo": "$1,200 MXN",
+            "plazo": "5 días hábiles"
+          }
+        ],
+        "recomendaciones": [
+          "Iniciar juicio ejecutivo mercantil para embargar la propiedad en Av. Vasconcelos 321.",
+          "Verificar si la hipoteca con Banorte permite embargo por deudas no hipotecarias."
+        ],
+        "costos_plazos": [
+          {
+            "tramite": "Certificado de gravámenes (RPPC)",
+            "costo": "$1,200 MXN",
+            "plazo": "5 días hábiles"
+          }
+        ]
+      }
+    }
+  ],
+  "institutions": [
+    {
+      "name": "Registro Civil de Nuevo León",
+      "description": "Emite actas de nacimiento, matrimonio y defunción. Útil para confirmar identidad y parientes.",
+      "website": "https://www.registrocivil.nl.gob.mx",
+      "contact": "contacto@registrocivil.nl.gob.mx",
+      "cost": "$50–$200 MXN por acta",
+      "response_time": "1–3 días hábiles"
+    },
+    {
+      "name": "Registro Público de la Propiedad de Nuevo León (RPPC)",
+      "description": "Certificados de propiedad, gravámenes y folios reales. Esencial para embargos y compraventas.",
+      "website": "https://rppc.nl.gob.mx",
+      "contact": "atencion@rppc.nl.gob.mx",
+      "cost": "$500–$1,500 MXN por certificado",
+      "response_time": "3–5 días hábiles"
+    },
+    {
+      "name": "Sistema de Justicia en Línea de Nuevo León (SIJNL)",
+      "description": "Consulta de expedientes judiciales (civiles, penales, mercantiles) en Nuevo León.",
+      "website": "https://sijnl.nl.gob.mx",
+      "contact": "soporte@sijnl.nl.gob.mx",
+      "cost": "Gratuito para abogados registrados",
+      "response_time": "Inmediato (en línea)"
+    },
+    {
+      "name": "Junta Local de Conciliación y Arbitraje de Nuevo León",
+      "description": "Demandas laborales y conflictos entre empleadores y trabajadores.",
+      "website": "https://junta.nl.gob.mx",
+      "contact": "informes@junta.nl.gob.mx",
+      "cost": "Gratuito",
+      "response_time": "3–5 días hábiles"
+    },
+    {
+      "name": "Fiscalía General de Justicia de Nuevo León",
+      "description": "Antecedentes penales y carpetas de investigación. Requiere solicitud formal.",
+      "website": "https://fiscalia.nl.gob.mx",
+      "contact": "atencionciudadana@fiscalia.nl.gob.mx",
+      "cost": "$200–$500 MXN por certificado",
+      "response_time": "5–10 días hábiles"
+    },
+    {
+      "name": "Catastro de Nuevo León",
+      "description": "Avalúos y medidas de terrenos. Útil para embargos y regularización de propiedades.",
+      "website": "https://catastro.nl.gob.mx",
+      "contact": "catastro@nl.gob.mx",
+      "cost": "Gratuito (consulta en línea)",
+      "response_time": "1–2 días hábiles"
+    },
+    {
+      "name": "Servicio de Administración Tributaria (SAT)",
+      "description": "Deudas fiscales, RFC y declaraciones. Requiere e.firma para consultas detalladas.",
+      "website": "https://www.sat.gob.mx",
+      "contact": "soporte@sat.gob.mx",
+      "cost": "Gratuito (con e.firma)",
+      "response_time": "Inmediato"
+    },
+    {
+      "name": "Instituto Nacional de Transparencia (INAI)",
+      "description": "Solicitudes de acceso a información pública (ej: padrón vehicular, licencias).",
+      "website": "https://www.inai.org.mx",
+      "contact": "solicitudes@inai.org.mx",
+      "cost": "Gratuito",
+      "response_time": "20 días hábiles"
+    }
+  ],
+  "legal_sources": [
+    {
+      "name": "Código Civil para el Estado de Nuevo León",
+      "relevant_articles": ["1830–2105 (Contratos)", "1295–1300 (Testamentos)", "2098 (Transmisión de dominio)"],
+      "link": "http://www.congresonl.gob.mx/leyes/CCNL.pdf"
+    },
+    {
+      "name": "Ley Federal del Trabajo",
+      "relevant_articles": ["47–50 (Despidos)", "76 (Aguinaldo)", "162 (Prima de antigüedad)"],
+      "link": "https://www.dof.gob.mx/nota_detalle.php?codigo=5669725&fecha=01/05/2019"
+    },
+    {
+      "name": "Código Penal para el Estado de Nuevo León",
+      "relevant_articles": ["367 (Robo)", "386 (Fraude)", "289 (Lesiones)"],
+      "link": "http://www.congresonl.gob.mx/leyes/CPNL.pdf"
+    },
+    {
+      "name": "Ley de Amparo",
+      "relevant_articles": ["107 (Procedencia)", "124 (Suspensión del acto reclamado)"],
+      "link": "https://www.dof.gob.mx/nota_detalle.php?codigo=5552202&fecha=02/04/2013"
+    },
+    {
+      "name": "Ley del Registro Público de la Propiedad y del Comercio de Nuevo León",
+      "relevant_articles": ["30 (Inscripción de propiedades)"],
+      "link": "http://www.congresonl.gob.mx/leyes/LRPPCNL.pdf"
+    },
+    {
+      "name": "Ley de Hacienda del Estado de Nuevo León",
+      "relevant_articles": ["25 (ISAI)", "120 (Derechos notariales)"],
+      "link": "http://www.congresonl.gob.mx/leyes/LHNL.pdf"
+    }
+  ],
+  "tools": [
+    {
+      "name": "SIJNL API",
+      "description": "Consulta de expedientes judiciales en Nuevo León. Requiere token de acceso para abogados registrados.",
+      "endpoint": "https://api.sijnl.nl.gob.mx/busqueda",
+      "parameters": {
+        "nombre": "string",
+        "tipo_juicio": "string (civil/penal/laboral/mercantil)",
+        "anio": "string (YYYY)"
+      },
+      "example": {
+        "request": {
+          "nombre": "Empresas XYZ, S.A. de C.V.",
+          "tipo_juicio": "mercantil",
+          "anio": "2023"
+        },
+        "response": {
+          "expedientes": [{
+            "numero_causa": "1234/2023",
+            "juez": "Lic. Laura Mendoza",
+            "estado": "en trámite"
+          }]
+        }
+      }
+    },
+    {
+      "name": "RPPC Web Scraper",
+      "description": "Extrae datos de certificados de propiedad del RPPC de N.L. Usa Python + BeautifulSoup.",
+      "code": "import requests\nfrom bs4 import BeautifulSoup\n\ndef buscar_propiedades(curp):\n    url = f"https://rppc.nl.gob.mx/busqueda?curp={curp}"\n    response = requests.get(url)\n    soup = BeautifulSoup(response.text, 'html.parser')\n    propiedades = []\n    for row in soup.select('table.propiedades tr'):\n        propiedades.append({\n            'direccion': row.select_one('.direccion').text,\n            'folio_real': row.select_one('.folio').text\n        })\n    return propiedades"
+    }
+  ],
+  "workflow": {
+    "persona": [
+      {"step": 1, "action": "Solicitar acta de nacimiento en Registro Civil", "time": "1–3 días", "cost": "$50–$200 MXN"},
+      {"step": 2, "action": "Validar CURP en RENAPO", "time": "inmediato", "cost": "$0 MXN"},
+      {"step": 3, "action": "Buscar propiedades en RPPC con CURP", "time": "3–5 días", "cost": "$500–$1,500 MXN"},
+      {"step": 4, "action": "Consultar expedientes en SIJNL", "time": "inmediato", "cost": "$0 MXN"}
+    ],
+    "propiedad": [
+      {"step": 1, "action": "Solicitar certificado de gravámenes en RPPC", "time": "3–5 días", "cost": "$500–$1,500 MXN"},
+      {"step": 2, "action": "Verificar avalúo en Catastro de N.L.", "time": "1–2 días", "cost": "$0 MXN"},
+      {"step": 3, "action": "Consultar embargos en Fiscalía de N.L.", "time": "5–10 días", "cost": "$200–$500 MXN"}
+    ]
+  },
+  "notes": [
+    "Todos los trámites que involucren datos personales requieren consentimiento del titular o orden judicial.",
+    "Para consultas en el SAT, se necesita e.firma (Firma Electrónica Avanzada).",
+    "Los plazos y costos son estimados para 2026; verificar con las instituciones para actualizaciones.",
+    "Este System Prompt puede integrarse con herramientas de IA como LangChain para automatizar búsquedas."
+  ]
+}
