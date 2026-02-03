@@ -197,7 +197,7 @@ export default {
       return `${this.website()}/i/${type}/${id}`;
     },
     trending: () => {
-      return `/settings/community-hub/trending`;
+      return `/settings/community-hub`;
     },
     authentication: () => {
       return `/settings/community-hub/authentication`;

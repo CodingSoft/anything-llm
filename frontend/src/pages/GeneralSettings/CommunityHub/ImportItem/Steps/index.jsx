@@ -54,7 +54,7 @@ export function CommunityHubImportItemLayout({ setStep, children }) {
   useEffect(() => {
     function initFromQuery() {
       const id = query.get("id");
-      if (id && id.startsWith("codingsoft-hub-id:")) {
+      if (id && id.startsWith("allm-community-id:")) {
         setSettings((prev) => ({ ...prev, itemId: id }));
       }
     }

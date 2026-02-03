@@ -307,7 +307,7 @@ const SidebarOptions = ({ user = null, t }) => (
           childOptions={[
             {
               btnText: "Explore Hub",
-              href: paths.communityHub.website(),
+              href: paths.communityHub.trending(),
               flex: true,
               roles: ["admin"],
             },

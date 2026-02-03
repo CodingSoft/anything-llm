@@ -40,9 +40,9 @@ function useCommunityHubExploreItems() {
         const { success, result } = await CommunityHub.fetchExploreItems();
         if (success && result) {
           const itemsWithImportId = {
-            agentSkills: { items: addImportIdToItems(result.agentSkills?.items || [], 'agentSkills'), hasMore: result.agentSkills?.hasMore || false, totalCount: result.agentSkills?.totalCount || 0 },
-            systemPrompts: { items: addImportIdToItems(result.systemPrompts?.items || [], 'systemPrompts'), hasMore: result.systemPrompts?.hasMore || false, totalCount: result.systemPrompts?.totalCount || 0 },
-            slashCommands: { items: addImportIdToItems(result.slashCommands?.items || [], 'slashCommands'), hasMore: result.slashCommands?.hasMore || false, totalCount: result.slashCommands?.totalCount || 0 },
+            agentSkills: { items: addImportIdToItems(result.agentskills?.items || [], 'agentSkills'), hasMore: result.agentskills?.hasMore || false, totalCount: result.agentskills?.totalCount || 0 },
+            systemPrompts: { items: addImportIdToItems(result.systemprompts?.items || [], 'systemPrompts'), hasMore: result.systemprompts?.hasMore || false, totalCount: result.systemprompts?.totalCount || 0 },
+            slashCommands: { items: addImportIdToItems(result.slashcommands?.items || [], 'slashCommands'), hasMore: result.slashcommands?.hasMore || false, totalCount: result.slashcommands?.totalCount || 0 },
           };
           setExploreItems(itemsWithImportId);
         }

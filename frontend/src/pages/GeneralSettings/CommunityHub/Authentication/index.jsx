@@ -6,8 +6,11 @@ import ContextualSaveBar from "@/components/ContextualSaveBar";
 import showToast from "@/utils/toast";
 import { FullScreenLoader } from "@/components/Preloader";
 import paths from "@/utils/paths";
-import { Info } from "@phosphor-icons/react";
+import { Info, House, ArrowSquareOut } from "@phosphor-icons/react";
 import UserItems from "./UserItems";
+
+// Detectar si estamos en modo hub local
+const IS_LOCAL_HUB = import.meta.env.DEV;
 
 function useCommunityHubAuthentication() {
   const [originalConnectionKey, setOriginalConnectionKey] = useState("");
@@ -106,6 +109,95 @@ export default function CommunityHubAuthentication() {
     disconnectHub,
   } = useCommunityHubAuthentication();
   if (loading) return <FullScreenLoader />;
+  
+  // Modo Hub Local
+  if (IS_LOCAL_HUB) {
+    return (
+      <div className="w-full flex flex-col gap-y-1 pb-6">
+        <div className="flex flex-col gap-y-2 mb-4">
+          <p className="text-base font-semibold text-theme-text-primary">
+            Community Hub Local
+          </p>
+          <p className="text-xs text-theme-text-secondary">
+            Estás usando el Community Hub local. No se requiere API Key para acceder a los items públicos.
+          </p>
+        </div>
+
+        {/* Info Box Local */}
+        <div className="border border-theme-border my-2 flex flex-col gap-y-4 text-theme-text-primary mb-6 bg-theme-settings-input-bg rounded-lg px-4 py-4">
+          <div className="flex flex-col gap-y-2">
+            <div className="gap-x-2 flex items-center">
+              <House size={25} className="text-primary-button" />
+              <h1 className="text-lg font-semibold">
+                Panel de Administración Local
+              </h1>
+            </div>
+            <p className="text-sm text-theme-text-secondary">
+              Gestiona tus items directamente desde el panel de administración local. 
+              Puedes crear, editar y eliminar prompts, comandos y skills.
+            </p>
+            <div className="flex gap-2 mt-2">
+              <a
+                href="http://localhost:5001/admin"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-primary-button text-white rounded-lg text-sm font-medium hover:bg-primary-button/90 transition-colors"
+              >
+                <ArrowSquareOut size={16} />
+                Abrir Panel Admin
+              </a>
+              <a
+                href="http://localhost:5001"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-theme-bg-primary border border-theme-border text-theme-text-primary rounded-lg text-sm font-medium hover:bg-theme-bg-secondary transition-colors"
+              >
+                <ArrowSquareOut size={16} />
+                Ver Hub Público
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* API Key Opcional para items privados */}
+        <div className="mt-6 mb-8">
+          <div className="flex flex-col w-full max-w-[400px]">
+            <label className="text-theme-text-primary text-sm font-semibold block mb-2">
+              API Key (Opcional)
+            </label>
+            <input
+              type="password"
+              value={connectionKey || ""}
+              onChange={onConnectionKeyChange}
+              className="border-none bg-theme-settings-input-bg text-theme-text-primary placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
+              placeholder="Solo si necesitas items privados"
+            />
+            <div className="flex items-center justify-between mt-2">
+              <p className="text-theme-text-secondary text-xs">
+                Solo necesaria si creaste items privados que requieren autenticación.
+              </p>
+              {!!originalConnectionKey && (
+                <button
+                  onClick={disconnectHub}
+                  className="border-none text-red-500 hover:text-red-600 text-sm font-medium transition-colors duration-200"
+                >
+                  Desconectar
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {!!originalConnectionKey && (
+          <div className="mt-6">
+            <UserItems connectionKey={originalConnectionKey} />
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Modo Hub Remoto (CodingSoft oficial)
   return (
     <div className="w-screen h-screen overflow-hidden bg-theme-bg-container flex">
       <Sidebar />

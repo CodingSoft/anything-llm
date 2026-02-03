@@ -34,7 +34,7 @@ USE_LOCAL_HUB=true
 HUB_SERVER_URL=http://127.0.0.1:5001
 
 # Prefijo para import IDs (debe coincidir con el hub)
-COMMUNITY_HUB_IMPORT_PREFIX=codingsoft-hub-id
+COMMUNITY_HUB_IMPORT_PREFIX=allm-community-id
 ```
 
 ### **Paso 4: Iniciar el Servidor del Hub**

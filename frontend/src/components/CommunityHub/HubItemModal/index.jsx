@@ -166,7 +166,7 @@ export default function HubItemModal({ item, type, isOpen, onClose }) {
             ID: <code className="text-theme-text-primary">{item.importId || item.id}</code>
           </div>
           <Link
-            to={paths.communityHub.importItem(item.importId || `codingsoft-hub-id:${item.itemType || type}:${item.id}`)}
+            to={paths.communityHub.importItem(item.importId || `allm-community-id:${item.itemType || type}:${item.id}`)}
             onClick={onClose}
             className="px-6 py-2.5 bg-primary-button hover:bg-primary-button/90 text-white rounded-lg font-medium transition-all flex items-center gap-2"
           >

@@ -920,6 +920,10 @@ font-size: 0.875rem;
 <a href="/" class="nav-link active">Explorar</a>
 <a href="/admin" class="nav-link">Administrar</a>
 <button class="theme-toggle" id="themeToggle" title="Cambiar tema">🌙</button>
+<a href="http://localhost:3000/settings/community-hub" class="nav-link" style="margin-left: 1rem; background: var(--accent-primary); color: #000; font-weight: 600;">
+<span>🏠</span>
+<span>Volver</span>
+</a>
 </div>
 </div>
 </nav>
@@ -1005,7 +1009,7 @@ font-size: 0.875rem;
 <div class="import-box">
 <div class="import-box-label">ID de Importación</div>
 <div class="import-box-row">
-<span class="import-id" id="importIdCode">codingsoft-hub-id:...</span>
+<span class="import-id" id="importIdCode">allm-community-id:...</span>
 <button class="copy-btn" id="copyBtn" onclick="copyImportId()">
 <span>📋</span>
 <span>Copiar</span>
@@ -1020,6 +1024,10 @@ font-size: 0.875rem;
 <span>📋</span>
 <span>Copiar ID</span>
 </button>
+<a href="http://localhost:3000/settings/community-hub/import-item" class="btn btn-primary" id="importLink" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;">
+<span>🚀</span>
+<span>Importar en AnythingLLM</span>
+</a>
 </div>
 </div>
 </div>
@@ -1027,6 +1035,10 @@ font-size: 0.875rem;
 <div class="toast" id="toast">✅ Copiado al portapapeles</div>
 
 <script>
+// Forzar recarga si hay caché vieja
+if (!window.location.search.includes('v=')) {
+  window.location.href = window.location.pathname + '?v=2';
+}
 const API_BASE = '/v1';
 let allItems = { systemPrompts: [], slashCommands: [], agentSkills: [], agentFlows: [] };
 let currentFilter = 'all';
@@ -1089,17 +1101,27 @@ ${Array(6).fill(0).map(() => `
 async function fetchItems() {
 renderSkeleton();
 try {
+console.log('Fetching from:', `${API_BASE}/explore`);
 const response = await fetch(`${API_BASE}/explore`);
+console.log('Response status:', response.status);
+if (!response.ok) {
+  throw new Error(`HTTP error! status: ${response.status}`);
+}
 const data = await response.json();
+console.log('Data received:', data);
+console.log('Keys:', Object.keys(data));
 allItems = {
 'systemPrompts': data.systemprompts?.items || [],
 'slashCommands': data.slashcommands?.items || [],
 'agentSkills': data.agentskills?.items || [],
 'agentFlows': data.agentflows?.items || []
 };
+console.log('Items loaded:', allItems);
 renderCategories();
 } catch (error) {
 console.error('Error fetching items:', error);
+console.log('Error details:', error.message);
+console.log('API_BASE:', API_BASE);
 document.getElementById('contentContainer').innerHTML = `
 <div class="empty-state">
 <div class="empty-state-icon">⚠️</div>
@@ -1148,7 +1170,7 @@ ${allItems[type].map(item => renderCard(type, item)).join('')}
 
 function renderCard(type, item) {
 const itemType = typeMap[type] || type.toLowerCase().replace(/s$/, '');
-const importId = item.importId || `codingsoft-hub-id:${itemType}:${item.id}`;
+const importId = item.importId || `allm-community-id:${itemType}:${item.id}`;
 const config = typeConfig[type];
 
 return `
@@ -1167,7 +1189,14 @@ return `
 <p class="card-description">${item.description}</p>
 <div class="card-footer">
 <div class="card-tags">
-${(item.tags || []).slice(0, 3).map(tag => `<span class="card-tag">${tag}</span>`).join('')}
+${(() => {
+  try {
+    const tags = typeof item.tags === 'string' ? JSON.parse(item.tags) : (item.tags || []);
+    return tags.slice(0, 3).map(tag => `<span class="card-tag">${tag}</span>`).join('');
+  } catch (e) {
+    return '';
+  }
+})()}
 </div>
 <span class="card-action">Importar →</span>
 </div>
@@ -1180,7 +1209,7 @@ const item = allItems[type]?.find(i => i.id === id);
 if (!item) return;
 
 const itemType = typeMap[type] || type.toLowerCase().replace(/s$/, '');
-const importId = item.importId || `codingsoft-hub-id:${itemType}:${item.id}`;
+const importId = item.importId || `allm-community-id:${itemType}:${item.id}`;
 
 const modalOverlay = document.getElementById('modalOverlay');
 const copyBtn = document.getElementById('copyBtn');
@@ -1194,6 +1223,7 @@ document.getElementById('modalCommand').textContent = item.command || '';
 document.getElementById('promptLabel').textContent = type === 'systemPrompts' ? 'Prompt' : 'Configuración';
 document.getElementById('modalPrompt').textContent = item.prompt || item.config || '';
 document.getElementById('importIdCode').textContent = importId;
+document.getElementById('importLink').href = `http://localhost:3000/settings/community-hub/import-item?id=${importId}`;
 
 modalOverlay.classList.add('active');
 document.body.style.overflow = 'hidden';

@@ -1032,11 +1032,12 @@ const search = document.getElementById('searchInput').value.toLowerCase();
 let filtered = currentType === 'all' ? allItems : items[currentType] || [];
 
 if (search) {
-filtered = filtered.filter(item =>
-item.name?.toLowerCase().includes(search) ||
+filtered = filtered.filter(item => {
+const itemTags = typeof item.tags === 'string' ? JSON.parse(item.tags || '[]') : (item.tags || []);
+return item.name?.toLowerCase().includes(search) ||
 item.description?.toLowerCase().includes(search) ||
-(item.tags || []).some(t => t.toLowerCase().includes(search))
-);
+itemTags.some(t => t.toLowerCase().includes(search));
+});
 }
 
 return filtered;
@@ -1064,8 +1065,8 @@ list.innerHTML = filtered.map(item => `
 <div class="item-info">
 <div class="item-name">${item.name}</div>
 <div class="item-desc">${item.description}</div>
-<div class="item-tags" style="${(item.tags || []).length ? '' : 'display: none;'}">
-${(item.tags || []).slice(0, 5).map(tag => `<span class="item-tag">${tag}</span>`).join('')}
+<div class="item-tags" style="${(() => { try { const t = typeof item.tags === 'string' ? JSON.parse(item.tags || '[]') : (item.tags || []); return t.length ? '' : 'display: none;'; } catch(e) { return 'display: none;'; } })()}">
+${(() => { try { const t = typeof item.tags === 'string' ? JSON.parse(item.tags || '[]') : (item.tags || []); return t.slice(0, 5).map(tag => `<span class="item-tag">${tag}</span>`).join(''); } catch(e) { return ''; } })()}
 </div>
 </div>
 <div class="item-meta">
@@ -1105,7 +1106,8 @@ document.getElementById('itemName').value = item.name;
 document.getElementById('itemDescription').value = item.description;
 document.getElementById('itemCommand').value = item.command || '';
 document.getElementById('itemPrompt').value = item.prompt || item.config || '';
-document.getElementById('itemTags').value = (item.tags || []).join(', ');
+const editTags = typeof item.tags === 'string' ? JSON.parse(item.tags || '[]') : (item.tags || []);
+document.getElementById('itemTags').value = editTags.join(', ');
 document.getElementById('itemVisibility').value = item.visibility || 'public';
 
 document.getElementById('formTitle').innerHTML = `<span>✏️</span>Editar ${typeLabels[type]}`;
