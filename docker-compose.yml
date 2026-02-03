@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  # 🚀 AnythingLLM - Aplicación principal
+  anythingllm:
+    image: codingsoft/anything-llm:latest
+    container_name: anythingllm
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - USE_LOCAL_HUB=true
+      - COMMUNITY_HUB_API_URL=http://community-hub:5001
+    volumes:
+      - anythingllm-data:/app/server/storage
+      - anythingllm-logs:/app/server/logs
+    depends_on:
+      community-hub:
+        condition: service_healthy
+    networks:
+      - anythingllm-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # 🎯 Community Hub - Servidor de prompts y comandos
+  community-hub:
+    image: ghcr.io/codingsoft/community-hub:1.1.0
+    container_name: community-hub
+    ports:
+      - "5001:5001"
+    environment:
+      - NODE_ENV=production
+      - PORT=5001
+      - DB_PATH=/data/hub.db
+      - COMMUNITY_HUB_IMPORT_PREFIX=allm-community-id
+    volumes:
+      - hub-data:/data
+    networks:
+      - anythingllm-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5001/v1/explore"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+# 📦 Volúmenes persistentes
+volumes:
+  anythingllm-data:
+    driver: local
+  anythingllm-logs:
+    driver: local
+  hub-data:
+    driver: local
+
+# 🌐 Red compartida entre servicios
+networks:
+  anythingllm-network:
+    driver: bridge
