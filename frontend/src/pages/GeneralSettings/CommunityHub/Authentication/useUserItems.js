@@ -17,8 +17,6 @@ export function useUserItems({ connectionKey }) {
 
   useEffect(() => {
     const fetchData = async () => {
-      console.log("fetching user items", connectionKey);
-      if (!connectionKey) return;
       setLoading(true);
       try {
         const { success, createdByMe, teamItems } =

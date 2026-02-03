@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Community Hub Admin - CodingSoft</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+--bg-primary: #09090b;
+--bg-secondary: #18181b;
+--bg-tertiary: #27272a;
+--bg-card: #18181b;
+--text-primary: #fff;
+--text-secondary: rgba(255, 255, 255, 0.7);
+--text-muted: rgba(255, 255, 255, 0.5);
+--border-color: #3f3f46;
+--accent-color: #46c8ff;
+--accent-hover: #7cd4fd;
+--card-hover: #1f1f23;
+--shadow-color: rgba(0, 0, 0, 0.5);
+--skeleton-base: #27272a;
+--skeleton-highlight: #3f3f46;
+--success-color: #22c55e;
+--warning-color: #f59e0b;
+--danger-color: #ef4444;
+}
+
+[data-theme="light"] {
+--bg-primary: #fafafa;
+--bg-secondary: #ffffff;
+--bg-tertiary: #f4f4f5;
+--bg-card: #ffffff;
+--text-primary: #18181b;
+--text-secondary: #52525b;
+--text-muted: #a1a1aa;
+--border-color: #e4e4e7;
+--accent-color: #0284c7;
+--accent-hover: #0369a1;
+--card-hover: #f4f4f5;
+--shadow-color: rgba(0, 0, 0, 0.1);
+--skeleton-base: #e4e4e7;
+--skeleton-highlight: #d4d4d8;
+}
+
+body {
+font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+background: var(--bg-primary);
+color: var(--text-primary);
+min-height: 100vh;
+line-height: 1.5;
+}
+
+/* Alpine.js cloak - oculta elementos hasta que Alpine cargue */
+[x-cloak] { display: none !important; }
+
+.header {
+background: var(--bg-secondary);
+border-bottom: 1px solid var(--border-color);
+padding: 0.75rem 1.5rem;
+position: sticky;
+top: 0;
+z-index: 100;
+backdrop-filter: blur(10px);
+}
+
+.header-content {
+max-width: 1400px;
+margin: 0 auto;
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 1.5rem;
+}
+
+.logo {
+display: flex;
+align-items: center;
+gap: 0.625rem;
+text-decoration: none;
+color: var(--text-primary);
+}
+
+.logo-icon {
+width: 32px;
+height: 32px;
+background: linear-gradient(135deg, var(--accent-color), #a855f7);
+border-radius: 8px;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 1rem;
+transition: transform 0.2s ease;
+}
+
+.logo:hover .logo-icon {
+transform: scale(1.05);
+}
+
+.logo-text {
+font-size: 1rem;
+font-weight: 600;
+}
+
+.nav-actions {
+display: flex;
+align-items: center;
+gap: 1rem;
+}
+
+.theme-toggle {
+width: 36px;
+height: 36px;
+border-radius: 8px;
+border: 1px solid var(--border-color);
+background: var(--bg-primary);
+color: var(--text-primary);
+cursor: pointer;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 1rem;
+transition: all 0.2s ease;
+}
+
+.theme-toggle:hover {
+background: var(--card-hover);
+border-color: var(--accent-color);
+}
+
+.stats {
+display: flex;
+gap: 1rem;
+}
+
+.stat {
+text-align: center;
+padding: 0.5rem 1rem;
+background: var(--bg-primary);
+border: 1px solid var(--border-color);
+border-radius: 10px;
+transition: all 0.2s ease;
+}
+
+.stat:hover {
+border-color: var(--accent-color);
+transform: translateY(-1px);
+}
+
+.stat-value {
+font-size: 1.25rem;
+font-weight: 700;
+color: var(--accent-color);
+}
+
+.stat-label {
+font-size: 0.625rem;
+color: var(--text-muted);
+text-transform: uppercase;
+letter-spacing: 0.05em;
+margin-top: 0.125rem;
+}
+
+.main {
+max-width: 1400px;
+margin: 0 auto;
+padding: 2rem 1.5rem;
+}
+
+.page-header {
+display: flex;
+align-items: center;
+justify-content: space-between;
+margin-bottom: 1.5rem;
+flex-wrap: wrap;
+gap: 1rem;
+}
+
+.page-title {
+font-size: 1.5rem;
+font-weight: 700;
+display: flex;
+align-items: center;
+gap: 0.75rem;
+}
+
+.search-wrapper {
+position: relative;
+flex: 1;
+max-width: 320px;
+}
+
+.search-icon {
+position: absolute;
+left: 0.875rem;
+top: 50%;
+transform: translateY(-50%);
+color: var(--text-muted);
+width: 16px;
+height: 16px;
+pointer-events: none;
+}
+
+.search-input {
+width: 100%;
+padding: 0.625rem 0.875rem 0.625rem 2.5rem;
+background: var(--bg-primary);
+border: 1px solid var(--border-color);
+border-radius: 10px;
+color: var(--text-primary);
+font-size: 0.875rem;
+outline: none;
+transition: all 0.2s ease;
+}
+
+.search-input:focus {
+border-color: var(--accent-color);
+box-shadow: 0 0 0 3px rgba(70, 200, 255, 0.15);
+}
+
+.tabs {
+display: flex;
+gap: 0.5rem;
+margin-bottom: 1.5rem;
+padding: 0.5rem;
+background: var(--bg-secondary);
+border: 1px solid var(--border-color);
+border-radius: 12px;
+overflow-x: auto;
+}
+
+.tab {
+padding: 0.625rem 1.25rem;
+background: transparent;
+border: 1px solid transparent;
+border-radius: 8px;
+color: var(--text-secondary);
+cursor: pointer;
+font-size: 0.8125rem;
+font-weight: 500;
+transition: all 0.2s ease;
+display: flex;
+align-items: center;
+gap: 0.5rem;
+white-space: nowrap;
+}
+
+.tab:hover {
+background: var(--bg-tertiary);
+color: var(--text-primary);
+}
+
+.tab.active {
+background: var(--accent-color);
+color: #000;
+}
+
+.form-card {
+background: var(--bg-secondary);
+border: 1px solid var(--border-color);
+border-radius: 16px;
+padding: 1.5rem;
+margin-bottom: 1.5rem;
+}
+
+.form-title {
+font-size: 1rem;
+font-weight: 600;
+margin-bottom: 1.25rem;
+color: var(--text-primary);
+display: flex;
+align-items: center;
+gap: 0.5rem;
+}
+
+.form-row {
+display: flex;
+gap: 1rem;
+margin-bottom: 1rem;
+}
+
+.form-group {
+flex: 1;
+}
+
+.form-label {
+display: block;
+font-size: 0.8125rem;
+color: var(--text-secondary);
+margin-bottom: 0.5rem;
+font-weight: 500;
+}
+
+.form-input, .form-select, .form-textarea {
+width: 100%;
+padding: 0.75rem 1rem;
+background: var(--bg-primary);
+border: 1px solid var(--border-color);
+border-radius: 10px;
+color: var(--text-primary);
+font-size: 0.875rem;
+outline: none;
+transition: all 0.2s ease;
+}
+
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+border-color: var(--accent-color);
+box-shadow: 0 0 0 3px rgba(70, 200, 255, 0.15);
+}
+
+.form-textarea {
+min-height: 120px;
+resize: vertical;
+font-family: 'JetBrains Mono', Monaco, 'Consolas', monospace;
+font-size: 0.8125rem;
+line-height: 1.5;
+}
+
+.form-actions {
+display: flex;
+gap: 0.75rem;
+margin-top: 1.25rem;
+padding-top: 1.25rem;
+border-top: 1px solid var(--border-color);
+}
+
+.btn {
+padding: 0.75rem 1.25rem;
+border-radius: 10px;
+font-size: 0.875rem;
+font-weight: 600;
+cursor: pointer;
+border: none;
+transition: all 0.2s ease;
+display: flex;
+align-items: center;
+gap: 0.5rem;
+}
+
+.btn-primary {
+background: var(--accent-color);
+color: #000;
+}
+
+.btn-primary:hover {
+background: var(--accent-hover);
+transform: translateY(-1px);
+box-shadow: 0 4px 12px rgba(70, 200, 255, 0.3);
+}
+
+.btn-danger {
+background: var(--danger-color);
+color: white;
+}
+
+.btn-secondary {
+background: var(--bg-primary);
+border: 1px solid var(--border-color);
+color: var(--text-primary);
+}
+
+.btn-secondary:hover {
+background: var(--bg-tertiary);
+border-color: var(--accent-color);
+}
+
+.btn-sm {
+padding: 0.5rem 0.875rem;
+font-size: 0.8125rem;
+}
+
+.items-list {
+display: flex;
+flex-direction: column;
+gap: 0.75rem;
+}
+
+.item-row {
+display: flex;
+align-items: center;
+gap: 1rem;
+padding: 1rem;
+background: var(--bg-primary);
+border: 1px solid var(--border-color);
+border-radius: 12px;
+transition: all 0.2s ease;
+}
+
+.item-row:hover {
+border-color: var(--accent-color);
+background: var(--card-hover);
+transform: translateX(4px);
+}
+
+.item-icon {
+width: 44px;
+height: 44px;
+background: var(--bg-secondary);
+border: 1px solid var(--border-color);
+border-radius: 10px;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 1.25rem;
+flex-shrink: 0;
+}
+
+.item-info {
+flex: 1;
+min-width: 0;
+}
+
+.item-name {
+font-size: 0.9375rem;
+font-weight: 600;
+color: var(--text-primary);
+}
+
+.item-desc {
+font-size: 0.8125rem;
+color: var(--text-secondary);
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+margin-top: 0.25rem;
+}
+
+.item-tags {
+display: flex;
+gap: 0.375rem;
+flex-wrap: wrap;
+margin-top: 0.5rem;
+}
+
+.item-tag {
+font-size: 0.6875rem;
+color: var(--text-secondary);
+background: var(--bg-secondary);
+border: 1px solid var(--border-color);
+padding: 0.25rem 0.625rem;
+border-radius: 9999px;
+}
+
+.badge {
+font-size: 0.625rem;
+padding: 0.25rem 0.625rem;
+border-radius: 6px;
+text-transform: uppercase;
+letter-spacing: 0.025em;
+font-weight: 600;
+}
+
+.badge-public {
+background: rgba(34, 197, 94, 0.15);
+color: var(--success-color);
+border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.badge-private {
+background: rgba(239, 68, 68, 0.15);
+color: var(--danger-color);
+border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.item-actions {
+display: flex;
+gap: 0.5rem;
+flex-shrink: 0;
+}
+
+.empty-state {
+text-align: center;
+padding: 4rem 2rem;
+color: var(--text-muted);
+}
+
+.empty-state-icon {
+font-size: 3rem;
+margin-bottom: 1rem;
+opacity: 0.5;
+}
+
+.toast {
+position: fixed;
+bottom: 2rem;
+left: 50%;
+transform: translateX(-50%) translateY(100px);
+background: var(--success-color);
+color: white;
+padding: 0.875rem 1.5rem;
+border-radius: 10px;
+font-size: 0.9375rem;
+font-weight: 500;
+opacity: 0;
+transition: all 0.3s ease;
+z-index: 2000;
+display: flex;
+align-items: center;
+gap: 0.5rem;
+box-shadow: 0 10px 40px rgba(34, 197, 94, 0.3);
+}
+
+.toast.show {
+transform: translateX(-50%) translateY(0);
+opacity: 1;
+}
+
+.toast.error {
+background: var(--danger-color);
+}
+
+.item-count {
+font-size: 0.8125rem;
+color: var(--text-muted);
+background: var(--bg-primary);
+padding: 0.375rem 0.75rem;
+border-radius: 6px;
+border: 1px solid var(--border-color);
+}
+
+.skeleton {
+background: linear-gradient(90deg, var(--skeleton-base) 25%, var(--skeleton-highlight) 50%, var(--skeleton-base) 75%);
+background-size: 200% 100%;
+animation: skeleton-loading 1.5s infinite;
+border-radius: 8px;
+}
+
+@keyframes skeleton-loading {
+0% { background-position: 200% 0; }
+100% { background-position: -200% 0; }
+}
+
+.skeleton-item {
+height: 76px;
+border-radius: 12px;
+}
+
+/* Modal con Alpine.js transitions */
+.modal-backdrop {
+position: fixed;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background: rgba(0, 0, 0, 0.8);
+backdrop-filter: blur(4px);
+z-index: 2000;
+display: flex;
+align-items: center;
+justify-content: center;
+padding: 1rem;
+}
+
+.modal-content {
+background: var(--bg-secondary);
+border: 1px solid var(--border-color);
+border-radius: 16px;
+padding: 1.5rem;
+max-width: 400px;
+width: 100%;
+text-align: center;
+}
+
+@media (max-width: 768px) {
+.header-content { flex-wrap: wrap; gap: 0.75rem; }
+.stats { width: 100%; justify-content: space-around; }
+.main { padding: 1.25rem; }
+.page-header { flex-direction: column; align-items: stretch; }
+.search-wrapper { max-width: 100%; }
+.form-row { flex-direction: column; gap: 0.75rem; }
+.item-row { flex-wrap: wrap; }
+.item-actions { width: 100%; justify-content: flex-end; margin-top: 0.5rem; padding-top: 0.75rem; border-top: 1px solid var(--border-color); }
+}
+
+@media (max-width: 480px) {
+.logo-text { display: none; }
+.stat { padding: 0.375rem 0.625rem; }
+.stat-value { font-size: 1rem; }
+}
+</style>
+</head>
+<body>
+<div x-data="adminApp()" x-init="init()" x-cloak>
+<header class="header">
+<div class="header-content">
+<a href="/" class="logo">
+<div class="logo-icon">⚡</div>
+<span class="logo-text">Community Hub Admin</span>
+</a>
+<div class="nav-actions">
+<div class="stats">
+<div class="stat">
+<div class="stat-value" x-text="totalItems">0</div>
+<div class="stat-label">Total</div>
+</div>
+<div class="stat">
+<div class="stat-value" x-text="items['system-prompt'].length">0</div>
+<div class="stat-label">Prompts</div>
+</div>
+<div class="stat">
+<div class="stat-value" x-text="items['slash-command'].length">0</div>
+<div class="stat-label">Comandos</div>
+</div>
+<div class="stat">
+<div class="stat-value" x-text="items['agent-skill'].length + items['agent-flow'].length">0</div>
+<div class="stat-label">Skills</div>
+</div>
+</div>
+<button class="theme-toggle" @click="toggleTheme()" x-text="theme === 'dark' ? '☀️' : '🌙'" title="Cambiar tema">
+</button>
+</div>
+</div>
+</header>
+
+<main class="main">
+<div class="page-header">
+<h1 class="page-title">
+<span>📦</span>
+Gestionar Community Hub
+</h1>
+<div class="search-wrapper">
+<svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+</svg>
+<input type="text" class="search-input" x-model="searchQuery" placeholder="Buscar items...">
+</div>
+</div>
+
+<div class="tabs">
+<template x-for="tab in tabs" :key="tab.id">
+<button 
+class="tab"
+:class="{ 'active': currentTab === tab.id }"
+@click="currentTab = tab.id"
+>
+<span x-text="tab.icon"></span>
+<span x-text="tab.label"></span>
+</button>
+</template>
+</div>
+
+<!-- Formulario -->
+<div class="form-card">
+<h3 class="form-title">
+<span x-text="editingId ? '✏️' : '➕'"></span>
+<span x-text="editingId ? 'Editar ' + typeLabels[currentTab] : 'Crear nuevo ' + typeLabels[currentTab]"></span>
+</h3>
+<form @submit.prevent="saveItem()">
+<input type="hidden" x-model="form.id">
+<div class="form-row">
+<div class="form-group">
+<label class="form-label">Nombre</label>
+<input type="text" class="form-input" x-model="form.name" placeholder="Ej: Creative Writer" required>
+</div>
+<div class="form-group">
+<label class="form-label">Descripción</label>
+<input type="text" class="form-input" x-model="form.description" placeholder="Describe el propósito..." required>
+</div>
+</div>
+<div class="form-group" x-show="currentTab === 'slash-command'" x-transition>
+<label class="form-label">Comando</label>
+<input type="text" class="form-input" x-model="form.command" placeholder="Ej: /traducir">
+</div>
+<div class="form-group">
+<label class="form-label" x-text="currentTab === 'system-prompt' || currentTab === 'slash-command' ? 'Prompt' : 'Configuración'"></label>
+<textarea class="form-textarea" x-model="form.prompt" placeholder="Escribe el prompt o configuración JSON..." required></textarea>
+</div>
+<div class="form-row">
+<div class="form-group">
+<label class="form-label">Tags (separados por coma)</label>
+<input type="text" class="form-input" x-model="form.tags" placeholder="writing, creative, general">
+</div>
+<div class="form-group">
+<label class="form-label">Visibilidad</label>
+<select class="form-select" x-model="form.visibility">
+<option value="public">🌐 Público</option>
+<option value="private">🔒 Privado</option>
+</select>
+</div>
+</div>
+<div class="form-actions">
+<button type="submit" class="btn btn-primary">
+<span>💾</span>
+<span x-text="editingId ? 'Actualizar' : 'Crear'"></span>
+</button>
+<button type="button" class="btn btn-secondary" @click="resetForm()">
+<span>❌</span>
+<span>Cancelar</span>
+</button>
+</div>
+</form>
+</div>
+
+<!-- Lista de items -->
+<div class="form-card">
+<div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1.25rem;">
+<h3 class="form-title" style="margin: 0;">
+<span>📂</span>
+Items existentes
+</h3>
+<span class="item-count" x-text="filteredItems.length + ' items'"></span>
+</div>
+
+<div class="items-list">
+<template x-if="loading">
+<div>
+<div class="skeleton skeleton-item" style="margin-bottom: 0.75rem;"></div>
+<div class="skeleton skeleton-item" style="margin-bottom: 0.75rem;"></div>
+<div class="skeleton skeleton-item"></div>
+</div>
+</template>
+
+<template x-if="!loading && filteredItems.length === 0">
+<div class="empty-state">
+<div class="empty-state-icon">📭</div>
+<div style="font-size: 1.125rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem;">No hay items</div>
+<div style="font-size: 0.9375rem; color: var(--text-secondary);">No se encontraron items que coincidan con la búsqueda.</div>
+</div>
+</template>
+
+<template x-for="item in filteredItems" :key="item.id">
+<div class="item-row">
+<div class="item-icon" x-text="typeIcons[item.itemType || currentTab]"></div>
+<div class="item-info">
+<div class="item-name" x-text="item.name"></div>
+<div class="item-desc" x-text="item.description"></div>
+<div class="item-tags" x-show="item.tags && item.tags.length">
+<template x-for="tag in item.tags.slice(0, 5)" :key="tag">
+<span class="item-tag" x-text="tag"></span>
+</template>
+</div>
+</div>
+<div class="item-meta">
+<span class="badge" :class="item.visibility === 'private' ? 'badge-private' : 'badge-public'" x-text="item.visibility === 'private' ? 'Privado' : 'Público'"></span>
+</div>
+<div class="item-actions">
+<button class="btn btn-secondary btn-sm" @click="editItem(item)">
+<span>✏️</span>
+<span>Editar</span>
+</button>
+<button class="btn btn-danger btn-sm" @click="showDeleteModal(item)">
+<span>🗑️</span>
+<span>Eliminar</span>
+</button>
+</div>
+</div>
+</template>
+</div>
+</div>
+</main>
+
+<!-- Toast -->
+<div class="toast" :class="{ 'show': toast.show, 'error': toast.error }" x-text="toast.message"></div>
+
+<!-- Modal de confirmación -->
+<div x-show="deleteModal.show" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" style="display: none;">
+<div class="modal-backdrop" @click="deleteModal.show = false">
+<div class="modal-content" @click.stop>
+<div style="font-size: 3rem; margin-bottom: 1rem;">🗑️</div>
+<div style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem;">¿Eliminar item?</div>
+<div style="color: var(--text-secondary); font-size: 0.9375rem; margin-bottom: 1.5rem;">Esta acción no se puede deshacer.</div>
+<div style="display: flex; gap: 0.75rem;">
+<button class="btn btn-danger" @click="confirmDelete()" style="flex: 1; justify-content: center;">
+<span>🗑️</span>
+<span>Eliminar</span>
+</button>
+<button class="btn btn-secondary" @click="deleteModal.show = false" style="flex: 1; justify-content: center;">
+<span>↩️</span>
+<span>Cancelar</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+const API_BASE = '/v1';
+
+function adminApp() {
+return {
+// Estado
+loading: true,
+searchQuery: '',
+currentTab: 'system-prompt',
+items: {
+'system-prompt': [],
+'slash-command': [],
+'agent-skill': [],
+'agent-flow': []
+},
+tabs: [
+{ id: 'system-prompt', label: 'System Prompts', icon: '📝' },
+{ id: 'slash-command', label: 'Slash Commands', icon: '⚡' },
+{ id: 'agent-skill', label: 'Agent Skills', icon: '🎯' },
+{ id: 'agent-flow', label: 'Agent Flows', icon: '🔄' },
+{ id: 'all', label: 'Ver todos', icon: '📋' }
+],
+typeIcons: {
+'system-prompt': '📝',
+'slash-command': '⚡',
+'agent-skill': '🎯',
+'agent-flow': '🔄'
+},
+typeLabels: {
+'system-prompt': 'System Prompt',
+'slash-command': 'Slash Command',
+'agent-skill': 'Agent Skill',
+'agent-flow': 'Agent Flow'
+},
+form: {
+id: '',
+name: '',
+description: '',
+command: '',
+prompt: '',
+tags: '',
+visibility: 'public'
+},
+theme: 'dark',
+toast: {
+show: false,
+message: '',
+error: false
+},
+deleteModal: {
+show: false,
+item: null
+},
+editingId: null,
+
+// Computed
+get totalItems() {
+return Object.values(this.items).flat().length;
+},
+
+get filteredItems() {
+const query = this.searchQuery.toLowerCase();
+const itemsToFilter = this.currentTab === 'all' 
+? Object.values(this.items).flat()
+: this.items[this.currentTab] || [];
+
+if (!query) return itemsToFilter;
+
+return itemsToFilter.filter(item =>
+item.name?.toLowerCase().includes(query) ||
+item.description?.toLowerCase().includes(query) ||
+(item.tags || []).some(t => t.toLowerCase().includes(query))
+);
+},
+
+// Métodos
+init() {
+this.initTheme();
+this.fetchItems();
+
+// Auto-hide toast
+this.$watch('toast.show', (value) => {
+if (value) {
+setTimeout(() => this.toast.show = false, 3000);
+}
+});
+},
+
+initTheme() {
+this.theme = localStorage.getItem('theme') || 'dark';
+document.documentElement.setAttribute('data-theme', this.theme);
+},
+
+toggleTheme() {
+this.theme = this.theme === 'dark' ? 'light' : 'dark';
+document.documentElement.setAttribute('data-theme', this.theme);
+localStorage.setItem('theme', this.theme);
+},
+
+async fetchItems() {
+this.loading = true;
+try {
+const response = await fetch(`${API_BASE}/explore`);
+const data = await response.json();
+this.items = {
+'system-prompt': data.systemprompts?.items || [],
+'slash-command': data.slashcommands?.items || [],
+'agent-skill': data.agentskills?.items || [],
+'agent-flow': data.agentflows?.items || []
+};
+} catch (error) {
+this.showToast('Error al cargar los items', true);
+} finally {
+this.loading = false;
+}
+},
+
+editItem(item) {
+this.editingId = item.id;
+this.currentTab = item.itemType || this.currentTab;
+this.form = {
+id: item.id,
+name: item.name,
+description: item.description,
+command: item.command || '',
+prompt: item.prompt || item.config || '',
+tags: (item.tags || []).join(', '),
+visibility: item.visibility || 'public'
+};
+window.scrollTo({ top: 0, behavior: 'smooth' });
+},
+
+resetForm() {
+this.editingId = null;
+this.form = {
+id: '',
+name: '',
+description: '',
+command: '',
+prompt: '',
+tags: '',
+visibility: 'public'
+};
+},
+
+async saveItem() {
+const item = {
+name: this.form.name,
+description: this.form.description,
+command: this.form.command,
+prompt: this.form.prompt,
+tags: this.form.tags.split(',').map(t => t.trim()).filter(t => t),
+visibility: this.form.visibility
+};
+
+const type = this.currentTab;
+
+try {
+if (this.editingId) {
+await fetch(`${API_BASE}/${type}/${this.editingId}/update`, {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify(item)
+});
+this.showToast('✅ Actualizado correctamente');
+} else {
+await fetch(`${API_BASE}/${type}/create`, {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify(item)
+});
+this.showToast('✅ Creado correctamente');
+}
+
+this.resetForm();
+this.fetchItems();
+} catch (error) {
+this.showToast('❌ Error al guardar', true);
+}
+},
+
+showDeleteModal(item) {
+this.deleteModal.item = item;
+this.deleteModal.show = true;
+},
+
+async confirmDelete() {
+if (!this.deleteModal.item) return;
+
+const { id, itemType } = this.deleteModal.item;
+const type = itemType || this.currentTab;
+
+try {
+await fetch(`${API_BASE}/${type}/${id}`, { method: 'DELETE' });
+this.deleteModal.show = false;
+this.deleteModal.item = null;
+this.fetchItems();
+this.showToast('🗑️ Eliminado correctamente');
+} catch (error) {
+this.showToast('❌ Error al eliminar', true);
+}
+},
+
+showToast(message, error = false) {
+this.toast = { show: true, message, error };
+}
+};
+}
+</script>
+</body>
+</html>

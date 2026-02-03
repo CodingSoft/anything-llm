@@ -1,0 +1,194 @@
+import { useEffect, useState } from "react";
+import CommunityHub from "@/models/communityHub";
+import ContextualSaveBar from "@/components/ContextualSaveBar";
+import showToast from "@/utils/toast";
+import { FullScreenLoader } from "@/components/Preloader";
+import paths from "@/utils/paths";
+import { Info } from "@phosphor-icons/react";
+import UserItems from "./Authentication/UserItems";
+
+function useCommunityHubAuthentication() {
+  const [originalConnectionKey, setOriginalConnectionKey] = useState("");
+  const [hasChanges, setHasChanges] = useState(false);
+  const [connectionKey, setConnectionKey] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  async function resetChanges() {
+    setConnectionKey(originalConnectionKey);
+    setHasChanges(false);
+  }
+
+  async function onConnectionKeyChange(e) {
+    const newConnectionKey = e.target.value;
+    setConnectionKey(newConnectionKey);
+    setHasChanges(true);
+  }
+
+  async function updateConnectionKey() {
+    if (connectionKey === originalConnectionKey) return;
+    setLoading(true);
+    try {
+      const response = await CommunityHub.updateSettings({
+        hub_api_key: connectionKey,
+      });
+      if (!response.success)
+        return showToast("Failed to save API key", "error");
+      setHasChanges(false);
+      showToast("API key saved successfully", "success");
+      setOriginalConnectionKey(connectionKey);
+    } catch (error) {
+      console.error(error);
+      showToast("Failed to save API key", "error");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function disconnectHub() {
+    setLoading(true);
+    try {
+      const response = await CommunityHub.updateSettings({
+        hub_api_key: "",
+      });
+      if (!response.success)
+        return showToast("Failed to disconnect from hub", "error");
+      setHasChanges(false);
+      showToast("Disconnected from CodingSoft Community Hub", "success");
+      setOriginalConnectionKey("");
+      setConnectionKey("");
+    } catch (error) {
+      console.error(error);
+      showToast("Failed to disconnect from hub", "error");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const { connectionKey } = await CommunityHub.getSettings();
+        setOriginalConnectionKey(connectionKey || "");
+        setConnectionKey(connectionKey || "");
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  return {
+    connectionKey,
+    originalConnectionKey,
+    loading,
+    onConnectionKeyChange,
+    updateConnectionKey,
+    hasChanges,
+    resetChanges,
+    disconnectHub,
+  };
+}
+
+export default function AuthenticationPanel() {
+  const {
+    connectionKey,
+    originalConnectionKey,
+    loading,
+    onConnectionKeyChange,
+    updateConnectionKey,
+    hasChanges,
+    resetChanges,
+    disconnectHub,
+  } = useCommunityHubAuthentication();
+
+  if (loading) return <FullScreenLoader />;
+
+  return (
+    <>
+      <ContextualSaveBar
+        showing={hasChanges}
+        onSave={updateConnectionKey}
+        onCancel={resetChanges}
+      />
+      <div className="w-full flex flex-col gap-y-1 pb-6">
+        <div className="flex flex-col gap-y-2 mb-4">
+          <p className="text-base font-semibold text-theme-text-primary">
+            Your CodingSoft Community Hub Account
+          </p>
+          <p className="text-xs text-theme-text-secondary">
+            Connecting your CodingSoft Community Hub account allows you to access your <b>private</b> CodingSoft Community Hub items as well as upload your own items to the CodingSoft Community Hub.
+          </p>
+        </div>
+        
+        {!connectionKey && (
+          <div className="border border-theme-border my-2 flex flex-col md:flex-row md:items-center gap-x-2 text-theme-text-primary mb-4 bg-theme-settings-input-bg w-1/2 rounded-lg px-4 py-2">
+            <div className="flex flex-col gap-y-2">
+              <div className="gap-x-2 flex items-center">
+                <Info size={25} />
+                <h1 className="text-lg font-semibold">
+                  Why connect my CodingSoft Community Hub account?
+                </h1>
+              </div>
+              <p className="text-sm text-theme-text-secondary">
+                Connecting your CodingSoft Community Hub account allows you
+                to pull in your <b>private</b> items from the CodingSoft
+                Community Hub as well as upload your own items to the
+                CodingSoft Community Hub.
+                <br />
+                <br />
+                <i>
+                  You do not need to connect your CodingSoft Community Hub
+                  account to pull in public items from the CodingSoft
+                  Community Hub.
+                </i>
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* API Key Section */}
+        <div className="mt-6 mb-8">
+          <div className="flex flex-col w-full max-w-[400px]">
+            <label className="text-theme-text-primary text-sm font-semibold block mb-2">
+              CodingSoft Hub API Key
+            </label>
+            <input
+              type="password"
+              value={connectionKey || ""}
+              onChange={onConnectionKeyChange}
+              className="border-none bg-theme-settings-input-bg text-theme-text-primary placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
+              placeholder="Enter your CodingSoft Hub API key"
+            />
+            <div className="flex items-center justify-between mt-2">
+              <p className="text-theme-text-secondary text-xs">
+                You can get your API key from your{" "}
+                <a
+                  href={paths.communityHub.profile()}
+                  className="underline text-primary-button"
+                >
+                  CodingSoft Community Hub profile page
+                </a>
+                .
+              </p>
+              {!!originalConnectionKey && (
+                <button
+                  onClick={disconnectHub}
+                  className="border-none text-red-500 hover:text-red-600 text-sm font-medium transition-colors duration-200"
+                >
+                  Disconnect
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {!!originalConnectionKey && (
+        <UserItems connectionKey={originalConnectionKey} />
+      )}
+    </>
+  );
+}

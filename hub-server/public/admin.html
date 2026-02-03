@@ -1,358 +1,1212 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Community Hub Admin - CodingSoft</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    :root {
-      --bg-dark: #09090b;
-      --bg-sidebar: #18181b;
-      --bg-card: #27272a;
-      --text-primary: #fff;
-      --text-secondary: #a1a1aa;
-      --border: #3f3f46;
-      --primary: #6366f1;
-      --danger: #ef4444;
-    }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: var(--bg-dark);
-      color: var(--text-primary);
-      min-height: 100vh;
-    }
-    .header {
-      background: var(--bg-sidebar);
-      border-bottom: 1px solid var(--border);
-      padding: 1rem 1.5rem;
-    }
-    .header-content { max-width: 1400px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
-    .logo { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; color: var(--text-primary); }
-    .logo-icon { width: 32px; height: 32px; background: linear-gradient(135deg, var(--primary), #a855f7); border-radius: 6px; display: flex; align-items: center; justify-content: center; }
-    .logo-text { font-size: 1.125rem; font-weight: 600; }
-    .stats { display: flex; gap: 1.5rem; }
-    .stat { text-align: center; }
-    .stat-value { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
-    .stat-label { font-size: 0.75rem; color: var(--text-secondary); }
-    .main { max-width: 1400px; margin: 0 auto; padding: 1.5rem; }
-    .page-title { font-size: 1.5rem; font-bold; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 1rem; }
-    .search-input {
-      padding: 0.5rem 1rem;
-      background: rgba(0, 0, 0, 0.5);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      color: var(--text-primary);
-      font-size: 0.875rem;
-      width: 300px;
-    }
-    .search-input:focus { outline: none; border-color: var(--primary); }
-    .tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem; flex-wrap: wrap; }
-    .tab { padding: 0.5rem 1rem; background: transparent; border: 1px solid var(--border); border-radius: 6px; color: var(--text-secondary); cursor: pointer; font-size: 0.875rem; }
-    .tab:hover { background: var(--bg-card); }
-    .tab.active { background: var(--primary); border-color: var(--primary); color: white; }
-    .form-card { background: var(--bg-sidebar); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; }
-    .form-title { font-size: 1rem; font-semibold; margin-bottom: 1rem; }
-    .form-row { display: flex; gap: 1rem; }
-    .form-group { flex: 1; margin-bottom: 1rem; }
-    .form-label { display: block; font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 0.5rem; }
-    .form-input, .form-textarea {
-      width: 100%;
-      padding: 0.625rem 0.75rem;
-      background: rgba(0, 0, 0, 0.5);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      color: var(--text-primary);
-      font-size: 0.875rem;
-    }
-    .form-input:focus, .form-textarea:focus { outline: none; border-color: var(--primary); }
-    .form-textarea { min-height: 100px; resize: vertical; font-family: monospace; }
-    .btn { padding: 0.625rem 1.25rem; border-radius: 6px; font-size: 0.875rem; font-weight: 500; cursor: pointer; border: none; transition: all 0.2s; }
-    .btn-primary { background: var(--primary); color: white; }
-    .btn-primary:hover { background: #4f46e5; }
-    .btn-danger { background: var(--danger); color: white; }
-    .btn-danger:hover { background: #dc2626; }
-    .btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--text-primary); }
-    .btn-secondary:hover { background: var(--bg-card); }
-    .items-list { display: flex; flex-direction: column; gap: 0.5rem; }
-    .item-row { display: flex; align-items: center; gap: 1rem; padding: 0.75rem; background: var(--bg-sidebar); border: 1px solid var(--border); border-radius: 8px; }
-    .item-row:hover { border-color: var(--primary); }
-    .item-icon { width: 40px; height: 40px; background: var(--bg-card); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; }
-    .item-info { flex: 1; min-width: 0; }
-    .item-name { font-size: 0.875rem; font-weight: 500; }
-    .item-desc { font-size: 0.75rem; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .item-tags { display: flex; gap: 0.25rem; flex-wrap: wrap; margin-top: 0.25rem; }
-    .item-tag { font-size: 0.625rem; color: var(--text-secondary); background: rgba(255,255,255,0.1); padding: 0.125rem 0.5rem; border-radius: 9999px; }
-    .item-meta { font-size: 0.75rem; color: var(--text-secondary); display: flex; gap: 0.5rem; align-items: center; }
-    .item-actions { display: flex; gap: 0.5rem; }
-    .btn-sm { padding: 0.375rem 0.75rem; font-size: 0.75rem; }
-    .section { display: none; }
-    .section.active { display: block; }
-    .empty-state { text-align: center; padding: 3rem; color: var(--text-secondary); }
-    .toast {
-      position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(100px);
-      background: #22c55e; color: white; padding: 0.75rem 1.25rem; border-radius: 8px;
-      font-size: 0.875rem; font-weight: 500; opacity: 0; transition: all 0.3s; z-index: 2000;
-    }
-    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-    .badge { font-size: 0.625rem; padding: 0.125rem 0.5rem; border-radius: 4px; text-transform: uppercase; }
-    .badge-public { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
-    .badge-private { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
-    .form-actions { display: flex; gap: 0.5rem; }
-    .filter-row { display: flex; gap: 1rem; align-items: center; margin-bottom: 1rem; }
-    .filter-select { padding: 0.5rem; background: rgba(0,0,0,0.5); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary); font-size: 0.875rem; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin - Community Hub | CodingSoft</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+--bg-primary: #0f0f0f;
+--bg-secondary: #1a1a1a;
+--bg-tertiary: #2a2a2a;
+--bg-card: #1a1a1a;
+--text-primary: #ffffff;
+--text-secondary: rgba(255, 255, 255, 0.7);
+--text-muted: rgba(255, 255, 255, 0.5);
+--border-color: #333333;
+--accent-primary: #46c8ff;
+--accent-secondary: #7cd4fd;
+--accent-gradient: linear-gradient(135deg, #46c8ff, #7cd4fd);
+--card-hover: #252525;
+--success: #22c55e;
+--warning: #f59e0b;
+--error: #ef4444;
+--shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+--shadow-md: 0 4px 6px rgba(0,0,0,0.4);
+--shadow-lg: 0 10px 25px rgba(0,0,0,0.5);
+--radius-sm: 6px;
+--radius-md: 8px;
+--radius-lg: 12px;
+--radius-xl: 16px;
+}
+
+[data-theme="light"] {
+--bg-primary: #ffffff;
+--bg-secondary: #f8f9fa;
+--bg-tertiary: #e9ecef;
+--bg-card: #ffffff;
+--text-primary: #1a1a1a;
+--text-secondary: #495057;
+--text-muted: #6c757d;
+--border-color: #dee2e6;
+--accent-primary: #0284c7;
+--accent-secondary: #0369a1;
+--accent-gradient: linear-gradient(135deg, #0284c7, #0369a1);
+--card-hover: #f1f3f5;
+--shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+--shadow-md: 0 4px 6px rgba(0,0,0,0.07);
+--shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+body {
+font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+background: var(--bg-primary);
+color: var(--text-primary);
+min-height: 100vh;
+line-height: 1.6;
+}
+
+/* Navbar */
+.navbar {
+background: var(--bg-secondary);
+border-bottom: 1px solid var(--border-color);
+padding: 0 1.5rem;
+height: 64px;
+display: flex;
+align-items: center;
+position: sticky;
+top: 0;
+z-index: 100;
+}
+
+.navbar-content {
+max-width: 1400px;
+width: 100%;
+margin: 0 auto;
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 1.5rem;
+}
+
+.logo {
+display: flex;
+align-items: center;
+gap: 0.75rem;
+text-decoration: none;
+color: var(--text-primary);
+font-weight: 600;
+font-size: 1.125rem;
+}
+
+.logo-icon {
+width: 36px;
+height: 36px;
+background: var(--accent-gradient);
+border-radius: 10px;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 1.25rem;
+box-shadow: var(--shadow-md);
+}
+
+.nav-links {
+display: flex;
+align-items: center;
+gap: 0.5rem;
+}
+
+.nav-link {
+display: flex;
+align-items: center;
+gap: 0.5rem;
+padding: 0.625rem 1rem;
+color: var(--text-secondary);
+text-decoration: none;
+font-size: 0.9375rem;
+font-weight: 500;
+border-radius: var(--radius-md);
+transition: all 0.2s ease;
+}
+
+.nav-link:hover {
+color: var(--text-primary);
+background: var(--bg-tertiary);
+}
+
+.nav-link.active {
+color: var(--accent-primary);
+background: rgba(70, 200, 255, 0.1);
+}
+
+.theme-toggle {
+width: 40px;
+height: 40px;
+border-radius: var(--radius-md);
+border: 1px solid var(--border-color);
+background: var(--bg-primary);
+color: var(--text-primary);
+cursor: pointer;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 1.125rem;
+transition: all 0.2s ease;
+margin-left: 0.5rem;
+}
+
+.theme-toggle:hover {
+background: var(--card-hover);
+border-color: var(--accent-primary);
+}
+
+/* Main content */
+.main {
+max-width: 1400px;
+margin: 0 auto;
+padding: 2rem 1.5rem;
+}
+
+/* Page header */
+.page-header {
+display: flex;
+align-items: center;
+justify-content: space-between;
+margin-bottom: 2rem;
+gap: 1.5rem;
+}
+
+.page-title {
+font-size: 1.875rem;
+font-weight: 700;
+display: flex;
+align-items: center;
+gap: 0.75rem;
+}
+
+.search-box {
+position: relative;
+width: 100%;
+max-width: 360px;
+}
+
+.search-input {
+width: 100%;
+padding: 0.75rem 1rem 0.75rem 2.75rem;
+background: var(--bg-secondary);
+border: 1px solid var(--border-color);
+border-radius: var(--radius-lg);
+color: var(--text-primary);
+font-size: 0.9375rem;
+outline: none;
+transition: all 0.2s ease;
+}
+
+.search-input:focus {
+border-color: var(--accent-primary);
+box-shadow: 0 0 0 3px rgba(70, 200, 255, 0.15);
+}
+
+.search-icon {
+position: absolute;
+left: 1rem;
+top: 50%;
+transform: translateY(-50%);
+color: var(--text-muted);
+width: 18px;
+height: 18px;
+}
+
+/* Stats bar */
+.stats-bar {
+display: flex;
+gap: 1rem;
+margin-bottom: 2rem;
+padding: 1rem 1.25rem;
+background: var(--bg-secondary);
+border: 1px solid var(--border-color);
+border-radius: var(--radius-xl);
+overflow-x: auto;
+}
+
+.stat-card {
+text-align: center;
+padding: 0.75rem 1.25rem;
+background: var(--bg-primary);
+border: 1px solid var(--border-color);
+border-radius: var(--radius-lg);
+min-width: 100px;
+transition: all 0.2s ease;
+}
+
+.stat-card:hover {
+border-color: var(--accent-primary);
+transform: translateY(-2px);
+}
+
+.stat-value {
+font-size: 1.5rem;
+font-weight: 700;
+color: var(--accent-primary);
+}
+
+.stat-label {
+font-size: 0.6875rem;
+color: var(--text-muted);
+text-transform: uppercase;
+letter-spacing: 0.05em;
+font-weight: 600;
+margin-top: 0.25rem;
+}
+
+/* Tabs */
+.tabs {
+display: flex;
+gap: 0.5rem;
+margin-bottom: 1.5rem;
+padding: 0.5rem;
+background: var(--bg-secondary);
+border: 1px solid var(--border-color);
+border-radius: var(--radius-xl);
+overflow-x: auto;
+scrollbar-width: none;
+}
+
+.tabs::-webkit-scrollbar {
+display: none;
+}
+
+.tab {
+padding: 0.75rem 1.25rem;
+background: transparent;
+border: 1px solid transparent;
+border-radius: var(--radius-lg);
+color: var(--text-secondary);
+cursor: pointer;
+font-size: 0.9375rem;
+font-weight: 500;
+transition: all 0.2s ease;
+display: flex;
+align-items: center;
+gap: 0.5rem;
+white-space: nowrap;
+}
+
+.tab:hover {
+background: var(--bg-tertiary);
+color: var(--text-primary);
+}
+
+.tab.active {
+background: var(--accent-primary);
+color: #000;
+}
+
+/* Form card */
+.form-card {
+background: var(--bg-secondary);
+border: 1px solid var(--border-color);
+border-radius: var(--radius-xl);
+padding: 1.5rem;
+margin-bottom: 1.5rem;
+}
+
+.form-title {
+font-size: 1.125rem;
+font-weight: 600;
+margin-bottom: 1.5rem;
+display: flex;
+align-items: center;
+gap: 0.5rem;
+}
+
+.form-row {
+display: grid;
+grid-template-columns: repeat(2, 1fr);
+gap: 1rem;
+margin-bottom: 1rem;
+}
+
+.form-group {
+margin-bottom: 1rem;
+}
+
+.form-group.full-width {
+grid-column: 1 / -1;
+}
+
+.form-label {
+display: block;
+font-size: 0.875rem;
+color: var(--text-secondary);
+margin-bottom: 0.5rem;
+font-weight: 500;
+}
+
+.form-input, .form-select, .form-textarea {
+width: 100%;
+padding: 0.875rem 1rem;
+background: var(--bg-primary);
+border: 1px solid var(--border-color);
+border-radius: var(--radius-lg);
+color: var(--text-primary);
+font-size: 0.9375rem;
+outline: none;
+transition: all 0.2s ease;
+}
+
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+border-color: var(--accent-primary);
+box-shadow: 0 0 0 3px rgba(70, 200, 255, 0.15);
+}
+
+.form-textarea {
+min-height: 140px;
+resize: vertical;
+font-family: 'JetBrains Mono', monospace;
+font-size: 0.875rem;
+line-height: 1.6;
+}
+
+.form-actions {
+display: flex;
+gap: 0.75rem;
+margin-top: 1.5rem;
+padding-top: 1.5rem;
+border-top: 1px solid var(--border-color);
+}
+
+.btn {
+padding: 0.875rem 1.5rem;
+border-radius: var(--radius-lg);
+font-size: 0.9375rem;
+font-weight: 600;
+cursor: pointer;
+border: none;
+transition: all 0.2s ease;
+display: flex;
+align-items: center;
+gap: 0.5rem;
+}
+
+.btn-primary {
+background: var(--accent-primary);
+color: #000;
+}
+
+.btn-primary:hover {
+background: var(--accent-secondary);
+transform: translateY(-1px);
+box-shadow: 0 4px 12px rgba(70, 200, 255, 0.3);
+}
+
+.btn-danger {
+background: var(--error);
+color: white;
+}
+
+.btn-danger:hover {
+opacity: 0.9;
+transform: translateY(-1px);
+box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.btn-secondary {
+background: var(--bg-primary);
+border: 1px solid var(--border-color);
+color: var(--text-primary);
+}
+
+.btn-secondary:hover {
+background: var(--bg-tertiary);
+border-color: var(--accent-primary);
+}
+
+.btn-sm {
+padding: 0.625rem 1rem;
+font-size: 0.875rem;
+}
+
+/* Items list */
+.items-header {
+display: flex;
+align-items: center;
+justify-content: space-between;
+margin-bottom: 1rem;
+}
+
+.items-title {
+font-size: 1.125rem;
+font-weight: 600;
+display: flex;
+align-items: center;
+gap: 0.5rem;
+}
+
+.items-count {
+font-size: 0.875rem;
+color: var(--text-muted);
+background: var(--bg-primary);
+padding: 0.375rem 0.875rem;
+border-radius: var(--radius-lg);
+font-weight: 500;
+}
+
+.items-list {
+display: flex;
+flex-direction: column;
+gap: 0.75rem;
+}
+
+.item-row {
+display: flex;
+align-items: center;
+gap: 1rem;
+padding: 1rem 1.25rem;
+background: var(--bg-primary);
+border: 1px solid var(--border-color);
+border-radius: var(--radius-lg);
+transition: all 0.2s ease;
+}
+
+.item-row:hover {
+border-color: var(--accent-primary);
+background: var(--card-hover);
+transform: translateX(4px);
+}
+
+.item-icon {
+width: 48px;
+height: 48px;
+background: var(--bg-secondary);
+border: 1px solid var(--border-color);
+border-radius: var(--radius-lg);
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 1.5rem;
+flex-shrink: 0;
+transition: all 0.2s ease;
+}
+
+.item-row:hover .item-icon {
+border-color: var(--accent-primary);
+}
+
+.item-info {
+flex: 1;
+min-width: 0;
+}
+
+.item-name {
+font-size: 1rem;
+font-weight: 600;
+color: var(--text-primary);
+margin-bottom: 0.25rem;
+}
+
+.item-desc {
+font-size: 0.875rem;
+color: var(--text-secondary);
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+}
+
+.item-tags {
+display: flex;
+gap: 0.375rem;
+flex-wrap: wrap;
+margin-top: 0.5rem;
+}
+
+.item-tag {
+font-size: 0.6875rem;
+color: var(--text-muted);
+background: var(--bg-secondary);
+border: 1px solid var(--border-color);
+padding: 0.25rem 0.625rem;
+border-radius: 9999px;
+transition: all 0.2s ease;
+}
+
+.item-tag:hover {
+background: var(--accent-primary);
+color: #000;
+border-color: var(--accent-primary);
+}
+
+.item-meta {
+display: flex;
+gap: 0.75rem;
+align-items: center;
+flex-shrink: 0;
+}
+
+.badge {
+font-size: 0.6875rem;
+padding: 0.25rem 0.625rem;
+border-radius: 6px;
+text-transform: uppercase;
+letter-spacing: 0.025em;
+font-weight: 600;
+}
+
+.badge-public {
+background: rgba(34, 197, 94, 0.1);
+color: var(--success);
+border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.badge-private {
+background: rgba(239, 68, 68, 0.1);
+color: var(--error);
+border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.item-actions {
+display: flex;
+gap: 0.5rem;
+flex-shrink: 0;
+}
+
+/* Empty state */
+.empty-state {
+text-align: center;
+padding: 4rem 2rem;
+color: var(--text-muted);
+}
+
+.empty-state-icon {
+font-size: 3rem;
+margin-bottom: 1rem;
+opacity: 0.6;
+}
+
+.empty-state-title {
+font-size: 1.25rem;
+font-weight: 600;
+color: var(--text-primary);
+margin-bottom: 0.5rem;
+}
+
+/* Toast */
+.toast {
+position: fixed;
+bottom: 2rem;
+left: 50%;
+transform: translateX(-50%) translateY(100px);
+background: var(--success);
+color: white;
+padding: 1rem 1.5rem;
+border-radius: var(--radius-lg);
+font-size: 1rem;
+font-weight: 500;
+display: flex;
+align-items: center;
+gap: 0.5rem;
+opacity: 0;
+transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+z-index: 2000;
+box-shadow: var(--shadow-lg);
+}
+
+.toast.show {
+transform: translateX(-50%) translateY(0);
+opacity: 1;
+}
+
+.toast.error {
+background: var(--error);
+}
+
+/* Skeleton */
+.skeleton {
+background: linear-gradient(90deg, var(--bg-tertiary) 25%, var(--bg-secondary) 50%, var(--bg-tertiary) 75%);
+background-size: 200% 100%;
+animation: skeleton-loading 1.5s infinite;
+border-radius: var(--radius-md);
+}
+
+@keyframes skeleton-loading {
+0% { background-position: 200% 0; }
+100% { background-position: -200% 0; }
+}
+
+.skeleton-item {
+height: 76px;
+border-radius: var(--radius-lg);
+}
+
+/* Modal */
+.modal-overlay {
+display: none;
+position: fixed;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background: rgba(0, 0, 0, 0.8);
+backdrop-filter: blur(8px);
+z-index: 1000;
+align-items: center;
+justify-content: center;
+padding: 1.5rem;
+opacity: 0;
+transition: opacity 0.3s ease;
+}
+
+.modal-overlay.active {
+display: flex;
+opacity: 1;
+}
+
+.modal {
+background: var(--bg-secondary);
+border: 1px solid var(--border-color);
+border-radius: var(--radius-xl);
+max-width: 420px;
+width: 100%;
+text-align: center;
+padding: 2rem;
+box-shadow: var(--shadow-lg);
+transform: scale(0.95);
+opacity: 0;
+transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modal-overlay.active .modal {
+transform: scale(1);
+opacity: 1;
+}
+
+.modal-icon {
+font-size: 4rem;
+margin-bottom: 1rem;
+}
+
+.modal-title {
+font-size: 1.25rem;
+font-weight: 600;
+margin-bottom: 0.5rem;
+}
+
+.modal-text {
+color: var(--text-secondary);
+font-size: 1rem;
+margin-bottom: 1.5rem;
+}
+
+.modal-actions {
+display: flex;
+gap: 0.75rem;
+}
+
+.modal-actions .btn {
+flex: 1;
+justify-content: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+.navbar {
+padding: 0 1rem;
+height: 60px;
+}
+
+.page-header {
+flex-direction: column;
+align-items: stretch;
+}
+
+.page-title {
+font-size: 1.5rem;
+}
+
+.search-box {
+max-width: 100%;
+}
+
+.stats-bar {
+overflow-x: auto;
+padding: 0.75rem;
+}
+
+.form-row {
+grid-template-columns: 1fr;
+}
+
+.item-row {
+flex-wrap: wrap;
+gap: 0.75rem;
+}
+
+.item-actions {
+width: 100%;
+justify-content: flex-end;
+margin-top: 0.5rem;
+padding-top: 0.75rem;
+border-top: 1px solid var(--border-color);
+}
+
+.tabs {
+padding: 0.375rem;
+gap: 0.25rem;
+}
+
+.tab {
+padding: 0.625rem 0.875rem;
+font-size: 0.875rem;
+}
+}
+
+@media (max-width: 480px) {
+.logo span {
+display: none;
+}
+
+.main {
+padding: 1.25rem;
+}
+
+.form-card {
+padding: 1.25rem;
+}
+
+.item-icon {
+width: 40px;
+height: 40px;
+font-size: 1.25rem;
+}
+}
+</style>
 </head>
 <body>
-  <header class="header">
-    <div class="header-content">
-      <a href="/" class="logo">
-        <div class="logo-icon">⚡</div>
-        <span class="logo-text">Community Hub Admin</span>
-      </a>
-      <div class="stats">
-        <div class="stat"><div class="stat-value" id="statTotal">0</div><div class="stat-label">Total</div></div>
-        <div class="stat"><div class="stat-value" id="statPrompts">0</div><div class="stat-label">Prompts</div></div>
-        <div class="stat"><div class="stat-value" id="statCommands">0</div><div class="stat-label">Commands</div></div>
-        <div class="stat"><div class="stat-value" id="statSkills">0</div><div class="stat-label">Skills</div></div>
-      </div>
-    </div>
-  </header>
+<nav class="navbar">
+<div class="navbar-content">
+<a href="/" class="logo">
+<div class="logo-icon">⚡</div>
+<span>Community Hub</span>
+</a>
+<div class="nav-links">
+<a href="/" class="nav-link">Explorar</a>
+<a href="/admin" class="nav-link active">Administrar</a>
+<button class="theme-toggle" id="themeToggle" title="Cambiar tema">🌙</button>
+</div>
+</div>
+</nav>
 
-  <main class="main">
-    <div class="page-title">
-      Gestionar Community Hub
-      <input type="text" class="search-input" id="searchInput" placeholder="Buscar items...">
-    </div>
-    
-    <div class="tabs">
-      <button class="tab active" onclick="showSection('system-prompt')">System Prompts</button>
-      <button class="tab" onclick="showSection('slash-command')">Slash Commands</button>
-      <button class="tab" onclick="showSection('agent-skill')">Agent Skills</button>
-      <button class="tab" onclick="showSection('agent-flow')">Agent Flows</button>
-      <button class="tab" onclick="showSection('all')" style="margin-left: auto;">Ver todos</button>
-    </div>
+<main class="main">
+<div class="page-header">
+<h1 class="page-title">
+<span>📦</span>
+Panel de Administración
+</h1>
+<div class="search-box">
+<svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+</svg>
+<input type="text" class="search-input" id="searchInput" placeholder="Buscar items...">
+</div>
+</div>
 
-    <div class="form-card">
-      <h3 class="form-title" id="formTitle">Crear nuevo System Prompt</h3>
-      <form id="itemForm" onsubmit="saveItem(event)">
-        <input type="hidden" id="itemId">
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Nombre</label>
-            <input type="text" id="itemName" class="form-input" placeholder="Ej: Creative Writer" required>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Descripción</label>
-            <input type="text" id="itemDescription" class="form-input" placeholder="Describe el propósito..." required>
-          </div>
-        </div>
-        <div class="form-group" id="commandGroup" style="display: none;">
-          <label class="form-label">Comando</label>
-          <input type="text" id="itemCommand" class="form-input" placeholder="Ej: /traducir">
-        </div>
-        <div class="form-group">
-          <label class="form-label" id="promptLabel">Prompt / Configuración</label>
-          <textarea id="itemPrompt" class="form-textarea" placeholder="Escribe el prompt o configuración JSON..." required></textarea>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Tags (separados por coma)</label>
-            <input type="text" id="itemTags" class="form-input" placeholder="writing, creative, general">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Visibilidad</label>
-            <select id="itemVisibility" class="form-input">
-              <option value="public">Público</option>
-              <option value="private">Privado</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-actions">
-          <button type="submit" class="btn btn-primary" id="submitBtn">Crear</button>
-          <button type="button" class="btn btn-secondary" onclick="resetForm()">Cancelar</button>
-        </div>
-      </form>
-    </div>
+<div class="stats-bar">
+<div class="stat-card">
+<div class="stat-value" id="statTotal">0</div>
+<div class="stat-label">Total Items</div>
+</div>
+<div class="stat-card">
+<div class="stat-value" id="statPrompts">0</div>
+<div class="stat-label">Prompts</div>
+</div>
+<div class="stat-card">
+<div class="stat-value" id="statCommands">0</div>
+<div class="stat-label">Comandos</div>
+</div>
+<div class="stat-card">
+<div class="stat-value" id="statSkills">0</div>
+<div class="stat-label">Skills</div>
+</div>
+</div>
 
-    <div class="form-card">
-      <div class="filter-row">
-        <h3 class="form-title" style="margin: 0;">Items existentes</h3>
-        <span id="itemCount" style="color: var(--text-secondary); font-size: 0.875rem;"></span>
-      </div>
-      <div class="items-list" id="itemsList"></div>
-    </div>
-  </main>
+<div class="tabs">
+<button class="tab active" onclick="showSection('system-prompt')">
+<span>📝</span>
+<span>System Prompts</span>
+</button>
+<button class="tab" onclick="showSection('slash-command')">
+<span>⚡</span>
+<span>Slash Commands</span>
+</button>
+<button class="tab" onclick="showSection('agent-skill')">
+<span>🎯</span>
+<span>Agent Skills</span>
+</button>
+<button class="tab" onclick="showSection('agent-flow')">
+<span>🔄</span>
+<span>Agent Flows</span>
+</button>
+<button class="tab" onclick="showSection('all')">
+<span>📋</span>
+<span>Ver todos</span>
+</button>
+</div>
 
-  <div class="toast" id="toast">Guardado correctamente</div>
+<div class="form-card">
+<h3 class="form-title" id="formTitle">
+<span>➕</span>
+Crear nuevo System Prompt
+</h3>
+<form id="itemForm" onsubmit="saveItem(event)">
+<input type="hidden" id="itemId">
+<div class="form-row">
+<div class="form-group">
+<label class="form-label">Nombre</label>
+<input type="text" id="itemName" class="form-input" placeholder="Ej: Creative Writer" required>
+</div>
+<div class="form-group">
+<label class="form-label">Descripción</label>
+<input type="text" id="itemDescription" class="form-input" placeholder="Describe el propósito..." required>
+</div>
+</div>
+<div class="form-group" id="commandGroup" style="display: none;">
+<label class="form-label">Comando</label>
+<input type="text" id="itemCommand" class="form-input" placeholder="Ej: /traducir">
+</div>
+<div class="form-group full-width">
+<label class="form-label" id="promptLabel">Prompt / Configuración</label>
+<textarea id="itemPrompt" class="form-textarea" placeholder="Escribe el prompt o configuración JSON..." required></textarea>
+</div>
+<div class="form-row">
+<div class="form-group">
+<label class="form-label">Tags (separados por coma)</label>
+<input type="text" id="itemTags" class="form-input" placeholder="writing, creative, general">
+</div>
+<div class="form-group">
+<label class="form-label">Visibilidad</label>
+<select id="itemVisibility" class="form-select">
+<option value="public">🌐 Público</option>
+<option value="private">🔒 Privado</option>
+</select>
+</div>
+</div>
+<div class="form-actions">
+<button type="submit" class="btn btn-primary" id="submitBtn">
+<span>💾</span>
+<span>Crear</span>
+</button>
+<button type="button" class="btn btn-secondary" onclick="resetForm()">
+<span>❌</span>
+<span>Cancelar</span>
+</button>
+</div>
+</form>
+</div>
 
-  <script>
-    const API_BASE = '/v1';
-    let currentType = 'system-prompt';
-    let items = { 'system-prompt': [], 'slash-command': [], 'agent-skill': [], 'agent-flow': [] };
-    let allItems = [];
+<div class="form-card">
+<div class="items-header">
+<h3 class="items-title">
+<span>📂</span>
+Items existentes
+</h3>
+<span class="items-count" id="itemsCount">Cargando...</span>
+</div>
+<div class="items-list" id="itemsList">
+<div class="skeleton skeleton-item"></div>
+<div class="skeleton skeleton-item"></div>
+<div class="skeleton skeleton-item"></div>
+</div>
+</div>
+</main>
 
-    const typeIcons = { 'system-prompt': '📝', 'slash-command': '⚡', 'agent-skill': '🎯', 'agent-flow': '🔄' };
-    const typeLabels = { 'system-prompt': 'System Prompt', 'slash-command': 'Slash Command', 'agent-skill': 'Agent Skill', 'agent-flow': 'Agent Flow' };
+<div class="toast" id="toast">Guardado correctamente</div>
 
-    async function fetchItems() {
-      try {
-        const response = await fetch(`${API_BASE}/explore`);
-        const data = await response.json();
-        items = {
-          'system-prompt': data.systemPrompts?.items || [],
-          'slash-command': data.slashCommands?.items || [],
-          'agent-skill': data.agentSkills?.items || [],
-          'agent-flow': data.agentFlows?.items || []
-        };
-        allItems = Object.values(items).flat();
-        updateStats();
-        renderItems();
-      } catch (error) { console.error('Error:', error); }
-    }
+<div class="modal-overlay" id="deleteModal">
+<div class="modal">
+<div class="modal-icon">🗑️</div>
+<div class="modal-title">¿Eliminar este item?</div>
+<div class="modal-text">Esta acción no se puede deshacer.</div>
+<div class="modal-actions">
+<button class="btn btn-danger" id="confirmDeleteBtn">
+<span>🗑️</span>
+<span>Eliminar</span>
+</button>
+<button class="btn btn-secondary" onclick="closeDeleteModal()">
+<span>↩️</span>
+<span>Cancelar</span>
+</button>
+</div>
+</div>
+</div>
 
-    function updateStats() {
-      document.getElementById('statTotal').textContent = allItems.length;
-      document.getElementById('statPrompts').textContent = items['system-prompt'].length;
-      document.getElementById('statCommands').textContent = items['slash-command'].length;
-      document.getElementById('statSkills').textContent = items['agent-skill'].length + items['agent-flow'].length;
-    }
+<script>
+const API_BASE = '/v1';
+let currentType = 'system-prompt';
+let items = { 'system-prompt': [], 'slash-command': [], 'agent-skill': [], 'agent-flow': [] };
+let allItems = [];
+let itemToDelete = null;
 
-    function showSection(type) {
-      currentType = type;
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      event.target.classList.add('active');
-      document.getElementById('commandGroup').style.display = type === 'slash-command' ? 'block' : 'none';
-      document.getElementById('promptLabel').textContent = type === 'system-prompt' ? 'Prompt' : type === 'slash-command' ? 'Prompt' : 'Configuración';
-      document.getElementById('formTitle').textContent = `Crear nuevo ${typeLabels[type]}`;
-      document.getElementById('submitBtn').textContent = 'Crear';
-      renderItems();
-    }
+const typeIcons = {
+'system-prompt': '📝',
+'slash-command': '⚡',
+'agent-skill': '🎯',
+'agent-flow': '🔄'
+};
 
-    function getFilteredItems() {
-      const search = document.getElementById('searchInput').value.toLowerCase();
-      let filtered = currentType === 'all' ? allItems : items[currentType] || [];
-      if (search) {
-        filtered = filtered.filter(item => 
-          item.name?.toLowerCase().includes(search) ||
-          item.description?.toLowerCase().includes(search) ||
-          (item.tags || []).some(t => t.toLowerCase().includes(search))
-        );
-      }
-      return filtered;
-    }
+const typeLabels = {
+'system-prompt': 'System Prompt',
+'slash-command': 'Slash Command',
+'agent-skill': 'Agent Skill',
+'agent-flow': 'Agent Flow'
+};
 
-    function renderItems() {
-      const list = document.getElementById('itemsList');
-      const filtered = getFilteredItems();
-      document.getElementById('itemCount').textContent = `${filtered.length} items`;
-      
-      if (filtered.length === 0) {
-        list.innerHTML = '<div class="empty-state">No hay items que coincidan con la búsqueda</div>';
-        return;
-      }
-      
-      list.innerHTML = filtered.map(item => `
-        <div class="item-row" data-id="${item.id}" data-type="${item.itemType || currentType}">
-          <div class="item-icon">${typeIcons[item.itemType || currentType] || '📦'}</div>
-          <div class="item-info">
-            <div class="item-name">${item.name}</div>
-            <div class="item-desc">${item.description}</div>
-            <div class="item-tags">
-              ${(item.tags || []).slice(0, 5).map(tag => `<span class="item-tag">${tag}</span>`).join('')}
-            </div>
-          </div>
-          <div class="item-meta">
-            <span class="badge badge-${item.visibility || 'public'}">${item.visibility || 'public'}</span>
-          </div>
-          <div class="item-actions">
-            <button class="btn btn-secondary btn-sm" onclick="editItem('${item.id}', '${item.itemType || currentType}')">Editar</button>
-            <button class="btn btn-danger btn-sm" onclick="deleteItem('${item.id}', '${item.itemType || currentType}')">Eliminar</button>
-          </div>
-        </div>
-      `).join('');
-    }
+function initTheme() {
+const savedTheme = localStorage.getItem('theme') || 'dark';
+document.documentElement.setAttribute('data-theme', savedTheme);
+updateThemeIcon(savedTheme);
+}
 
-    function editItem(id, type) {
-      const itemList = items[type] || [];
-      const item = itemList.find(i => i.id === id);
-      if (!item) return;
-      
-      currentType = type;
-      document.querySelectorAll('.tab').forEach(t => {
-        t.classList.toggle('active', t.textContent.toLowerCase().includes(type.split('-')[0]));
-      });
-      
-      document.getElementById('itemId').value = item.id;
-      document.getElementById('itemName').value = item.name;
-      document.getElementById('itemDescription').value = item.description;
-      document.getElementById('itemCommand').value = item.command || '';
-      document.getElementById('itemPrompt').value = item.prompt || item.config || '';
-      document.getElementById('itemTags').value = (item.tags || []).join(', ');
-      document.getElementById('itemVisibility').value = item.visibility || 'public';
-      
-      document.getElementById('formTitle').textContent = `Editar ${typeLabels[type]}`;
-      document.getElementById('submitBtn').textContent = 'Actualizar';
-      document.getElementById('commandGroup').style.display = type === 'slash-command' ? 'block' : 'none';
-    }
+function toggleTheme() {
+const currentTheme = document.documentElement.getAttribute('data-theme');
+const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+document.documentElement.setAttribute('data-theme', newTheme);
+localStorage.setItem('theme', newTheme);
+updateThemeIcon(newTheme);
+}
 
-    function resetForm() {
-      document.getElementById('itemForm').reset();
-      document.getElementById('itemId').value = '';
-      document.getElementById('formTitle').textContent = `Crear nuevo ${typeLabels[currentType]}`;
-      document.getElementById('submitBtn').textContent = 'Crear';
-    }
+function updateThemeIcon(theme) {
+const btn = document.getElementById('themeToggle');
+btn.textContent = theme === 'dark' ? '☀️' : '🌙';
+btn.title = theme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro';
+}
 
-    async function saveItem(event) {
-      event.preventDefault();
-      
-      const id = document.getElementById('itemId').value;
-      const name = document.getElementById('itemName').value;
-      const description = document.getElementById('itemDescription').value;
-      const command = document.getElementById('itemCommand').value;
-      const prompt = document.getElementById('itemPrompt').value;
-      const tags = document.getElementById('itemTags').value.split(',').map(t => t.trim()).filter(t => t);
-      const visibility = document.getElementById('itemVisibility').value;
-      
-      const item = { name, description, command, prompt, tags, visibility };
-      const type = currentType;
-      
-      if (id) {
-        await fetch(`${API_BASE}/${type}/${id}/update`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(item)
-        });
-      } else {
-        await fetch(`${API_BASE}/${type}/create`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(item)
-        });
-      }
-      
-      resetForm();
-      fetchItems();
-      showToast(id ? 'Actualizado correctamente' : 'Creado correctamente');
-    }
+async function fetchItems() {
+const list = document.getElementById('itemsList');
+list.innerHTML = `
+<div class="skeleton skeleton-item"></div>
+<div class="skeleton skeleton-item"></div>
+<div class="skeleton skeleton-item"></div>
+`;
 
-    async function deleteItem(id, type) {
-      if (!confirm('¿Eliminar este item?')) return;
-      await fetch(`${API_BASE}/${type}/${id}`, { method: 'DELETE' });
-      fetchItems();
-      showToast('Eliminado correctamente');
-    }
+try {
+const response = await fetch(`${API_BASE}/explore`);
+const data = await response.json();
+items = {
+'system-prompt': data.systemprompts?.items || [],
+'slash-command': data.slashcommands?.items || [],
+'agent-skill': data.agentskills?.items || [],
+'agent-flow': data.agentflows?.items || []
+};
+allItems = Object.values(items).flat();
+updateStats();
+renderItems();
+} catch (error) {
+list.innerHTML = `
+<div class="empty-state">
+<div class="empty-state-icon">⚠️</div>
+<div class="empty-state-title">Error al cargar</div>
+<div>No se pudieron cargar los items.</div>
+</div>
+`;
+}
+}
 
-    function showToast(message) {
-      const toast = document.getElementById('toast');
-      toast.textContent = message;
-      toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 3000);
-    }
+function updateStats() {
+document.getElementById('statTotal').textContent = allItems.length;
+document.getElementById('statPrompts').textContent = items['system-prompt'].length;
+document.getElementById('statCommands').textContent = items['slash-command'].length;
+document.getElementById('statSkills').textContent = items['agent-skill'].length + items['agent-flow'].length;
+}
 
-    document.getElementById('searchInput').addEventListener('input', renderItems);
+function showSection(type) {
+currentType = type;
+document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+event.currentTarget.classList.add('active');
 
-    fetchItems();
-  </script>
+document.getElementById('commandGroup').style.display = type === 'slash-command' ? 'block' : 'none';
+document.getElementById('promptLabel').textContent = type === 'system-prompt' ? 'Prompt' : type === 'slash-command' ? 'Prompt' : 'Configuración';
+document.getElementById('formTitle').innerHTML = `<span>➕</span>Crear nuevo ${typeLabels[type]}`;
+document.getElementById('submitBtn').innerHTML = '<span>💾</span><span>Crear</span>';
+
+renderItems();
+}
+
+function getFilteredItems() {
+const search = document.getElementById('searchInput').value.toLowerCase();
+let filtered = currentType === 'all' ? allItems : items[currentType] || [];
+
+if (search) {
+filtered = filtered.filter(item =>
+item.name?.toLowerCase().includes(search) ||
+item.description?.toLowerCase().includes(search) ||
+(item.tags || []).some(t => t.toLowerCase().includes(search))
+);
+}
+
+return filtered;
+}
+
+function renderItems() {
+const list = document.getElementById('itemsList');
+const filtered = getFilteredItems();
+document.getElementById('itemsCount').textContent = `${filtered.length} items`;
+
+if (filtered.length === 0) {
+list.innerHTML = `
+<div class="empty-state">
+<div class="empty-state-icon">📭</div>
+<div class="empty-state-title">No hay items</div>
+<div>No se encontraron items que coincidan con la búsqueda.</div>
+</div>
+`;
+return;
+}
+
+list.innerHTML = filtered.map(item => `
+<div class="item-row" data-id="${item.id}" data-type="${item.itemType || currentType}">
+<div class="item-icon">${typeIcons[item.itemType || currentType] || '📦'}</div>
+<div class="item-info">
+<div class="item-name">${item.name}</div>
+<div class="item-desc">${item.description}</div>
+<div class="item-tags" style="${(item.tags || []).length ? '' : 'display: none;'}">
+${(item.tags || []).slice(0, 5).map(tag => `<span class="item-tag">${tag}</span>`).join('')}
+</div>
+</div>
+<div class="item-meta">
+<span class="badge badge-${item.visibility || 'public'}">${item.visibility === 'private' ? 'Privado' : 'Público'}</span>
+</div>
+<div class="item-actions">
+<button class="btn btn-secondary btn-sm" onclick="editItem('${item.id}', '${item.itemType || currentType}')">
+<span>✏️</span>
+<span>Editar</span>
+</button>
+<button class="btn btn-danger btn-sm" onclick="showDeleteModal('${item.id}', '${item.itemType || currentType}')">
+<span>🗑️</span>
+<span>Eliminar</span>
+</button>
+</div>
+</div>
+`).join('');
+}
+
+function editItem(id, type) {
+const itemList = items[type] || [];
+const item = itemList.find(i => i.id === id);
+if (!item) return;
+
+currentType = type;
+document.querySelectorAll('.tab').forEach(t => {
+const onclick = t.getAttribute('onclick');
+if (onclick && onclick.includes(`'${type}'`)) {
+t.classList.add('active');
+} else {
+t.classList.remove('active');
+}
+});
+
+document.getElementById('itemId').value = item.id;
+document.getElementById('itemName').value = item.name;
+document.getElementById('itemDescription').value = item.description;
+document.getElementById('itemCommand').value = item.command || '';
+document.getElementById('itemPrompt').value = item.prompt || item.config || '';
+document.getElementById('itemTags').value = (item.tags || []).join(', ');
+document.getElementById('itemVisibility').value = item.visibility || 'public';
+
+document.getElementById('formTitle').innerHTML = `<span>✏️</span>Editar ${typeLabels[type]}`;
+document.getElementById('submitBtn').innerHTML = '<span>💾</span><span>Actualizar</span>';
+document.getElementById('commandGroup').style.display = type === 'slash-command' ? 'block' : 'none';
+
+window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function resetForm() {
+document.getElementById('itemForm').reset();
+document.getElementById('itemId').value = '';
+document.getElementById('formTitle').innerHTML = `<span>➕</span>Crear nuevo ${typeLabels[currentType]}`;
+document.getElementById('submitBtn').innerHTML = '<span>💾</span><span>Crear</span>';
+}
+
+async function saveItem(event) {
+event.preventDefault();
+
+const id = document.getElementById('itemId').value;
+const name = document.getElementById('itemName').value;
+const description = document.getElementById('itemDescription').value;
+const command = document.getElementById('itemCommand').value;
+const prompt = document.getElementById('itemPrompt').value;
+const tags = document.getElementById('itemTags').value.split(',').map(t => t.trim()).filter(t => t);
+const visibility = document.getElementById('itemVisibility').value;
+
+const item = { name, description, command, prompt, tags, visibility };
+const type = currentType;
+
+try {
+if (id) {
+await fetch(`${API_BASE}/${type}/${id}/update`, {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify(item)
+});
+showToast('✅ Actualizado correctamente');
+} else {
+await fetch(`${API_BASE}/${type}/create`, {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify(item)
+});
+showToast('✅ Creado correctamente');
+}
+
+resetForm();
+fetchItems();
+} catch (error) {
+showToast('❌ Error al guardar', true);
+}
+}
+
+function showDeleteModal(id, type) {
+itemToDelete = { id, type };
+document.getElementById('deleteModal').classList.add('active');
+document.getElementById('confirmDeleteBtn').onclick = confirmDelete;
+}
+
+function closeDeleteModal() {
+document.getElementById('deleteModal').classList.remove('active');
+itemToDelete = null;
+}
+
+async function confirmDelete() {
+if (!itemToDelete) return;
+
+const { id, type } = itemToDelete;
+
+try {
+await fetch(`${API_BASE}/${type}/${id}`, { method: 'DELETE' });
+closeDeleteModal();
+fetchItems();
+showToast('🗑️ Eliminado correctamente');
+} catch (error) {
+showToast('❌ Error al eliminar', true);
+}
+}
+
+function showToast(message, isError = false) {
+const toast = document.getElementById('toast');
+toast.textContent = message;
+toast.classList.toggle('error', isError);
+toast.classList.add('show');
+setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+// Event listeners
+document.getElementById('searchInput').addEventListener('input', renderItems);
+document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+document.getElementById('deleteModal').addEventListener('click', (e) => {
+if (e.target === document.getElementById('deleteModal')) closeDeleteModal();
+});
+document.addEventListener('keydown', (e) => {
+if (e.key === 'Escape') closeDeleteModal();
+});
+
+// Initialize
+initTheme();
+fetchItems();
+</script>
 </body>
 </html>

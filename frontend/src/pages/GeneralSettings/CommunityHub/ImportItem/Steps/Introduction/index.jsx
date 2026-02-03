@@ -15,7 +15,7 @@ export default function Introduction({ settings, setSettings, setStep }) {
   }, [settings.itemId]);
 
   useEffect(() => {
-    if (itemId && itemId.startsWith("allm-community-id:") && itemId !== "") {
+    if (itemId && itemId.startsWith("codingsoft-hub-id:") && itemId !== "") {
       const timer = setTimeout(() => {
         handleContinue();
       }, 300);
@@ -24,7 +24,7 @@ export default function Introduction({ settings, setSettings, setStep }) {
   }, [itemId]);
 
   const handleContinue = () => {
-    if (!itemId || !itemId.startsWith("allm-community-id:")) {
+    if (!itemId || !itemId.startsWith("codingsoft-hub-id:")) {
       if (!itemId) return;
       return showToast("Please enter a valid Import ID", "error");
     }
@@ -39,7 +39,7 @@ export default function Introduction({ settings, setSettings, setStep }) {
   const handlePaste = async () => {
     try {
       const clipboard = await navigator.clipboard.readText();
-      if (clipboard.startsWith('allm-community-id:')) {
+      if (clipboard.startsWith('codingsoft-hub-id:')) {
         setItemId(clipboard);
         showToast("Import ID pasted from clipboard", "success");
       } else {
@@ -98,7 +98,7 @@ export default function Introduction({ settings, setSettings, setStep }) {
                     type="text"
                     value={itemId}
                     onChange={(e) => setItemId(e.target.value)}
-                    placeholder="allm-community-id:slash-command:1234567890"
+                    placeholder="codingsoft-hub-id:slash-command:1234567890"
                     className="border-none bg-theme-settings-input-bg text-theme-text-primary placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
                   />
                   <button

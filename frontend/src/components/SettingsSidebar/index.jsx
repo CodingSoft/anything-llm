@@ -306,14 +306,8 @@ const SidebarOptions = ({ user = null, t }) => (
           icon={<Globe className="h-5 w-5 flex-shrink-0" />}
           childOptions={[
             {
-              btnText: "Explore Trending",
-              href: paths.communityHub.trending(),
-              flex: true,
-              roles: ["admin"],
-            },
-            {
-              btnText: "Your Account",
-              href: paths.communityHub.authentication(),
+              btnText: "Explore Hub",
+              href: paths.communityHub.website(),
               flex: true,
               roles: ["admin"],
             },

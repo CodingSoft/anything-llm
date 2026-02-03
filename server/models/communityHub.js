@@ -76,17 +76,18 @@ const CommunityHub = {
     if (!entityType || !entityId)
       return { item: null, error: "Invalid import ID" };
 
+    const USE_LOCAL_HUB = process.env.USE_LOCAL_HUB === "true";
     const { SystemSettings } = require("./systemSettings");
     const { connectionKey } = await SystemSettings.hubSettings();
+    const key = connectionKey || (USE_LOCAL_HUB ? "local-key" : null);
+    
     const { url, item, error } = await fetch(
       `${this.apiBase}/${entityType}/${entityId}/pull`,
       {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          ...(connectionKey
-            ? { Authorization: `Bearer ${connectionKey}` }
-            : {}),
+          ...(key ? { Authorization: `Bearer ${key}` } : {}),
         },
       }
     )
@@ -126,7 +127,8 @@ const CommunityHub = {
 
     if (item.itemType === "slash-command") {
       const { SlashCommandPresets } = require("./slashCommandsPresets");
-      await SlashCommandPresets.create(options?.currentUser?.id, {
+      const userId = options?.currentUser?.id || 1; // Default to 1 for local hub
+      await SlashCommandPresets.create(userId, {
         command: SlashCommandPresets.formatCommand(String(item.command)),
         prompt: String(item.prompt),
         description: String(item.description),
@@ -160,13 +162,15 @@ const CommunityHub = {
   },
 
   fetchUserItems: async function (connectionKey) {
-    if (!connectionKey) return { createdByMe: {}, teamItems: [] };
+    const USE_LOCAL_HUB = process.env.USE_LOCAL_HUB === "true";
+    const key = connectionKey || (USE_LOCAL_HUB ? "local-key" : null);
+    if (!key) return { createdByMe: {}, teamItems: [] };
 
     return await fetch(`${this.apiBase}/items`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${connectionKey}`,
+        Authorization: `Bearer ${key}`,
       },
     })
       .then((response) => response.json())

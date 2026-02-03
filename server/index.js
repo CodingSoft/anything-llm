@@ -6,6 +6,7 @@ require("./utils/logger")();
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const { createProxyMiddleware } = require("http-proxy-middleware");
 const path = require("path");
 const { reqBody } = require("./utils/http");
 const { systemEndpoints } = require("./endpoints/system");
@@ -85,6 +86,38 @@ embeddedEndpoints(apiRouter);
 
 // Externally facing browser extension endpoints
 browserExtensionEndpoints(apiRouter);
+
+// Community Hub Proxy - Sirve la UI del hub desde /community-hub
+// El API ya está integrado via communityHubEndpoints en /api/community-hub/
+// Esta proxy es solo para servir las páginas HTML del hub-server
+// Requiere que el servidor del hub esté ejecutándose en el puerto 5001
+if (process.env.USE_LOCAL_HUB === "true" || process.env.NODE_ENV === "development") {
+  const hubProxy = createProxyMiddleware({
+    target: process.env.HUB_SERVER_URL || "http://127.0.0.1:5001",
+    changeOrigin: true,
+    pathRewrite: {
+      "^/community-hub": ""
+    },
+    // No redirigir las peticiones API - esas van por communityHubEndpoints
+    filter: (pathname) => {
+      // Solo proxy las rutas que no son API
+      return !pathname.match(/^\/community-hub\/(api|v1)\//);
+    },
+    onError: (err, req, res) => {
+      console.error("[Hub Proxy Error]", err.message);
+      res.status(503).json({
+        error: "Community Hub no disponible",
+        message: "Asegúrate de que el servidor del hub esté ejecutándose. Ejecuta: cd hub-server && npm run dev"
+      });
+    },
+    onProxyReq: (proxyReq, req) => {
+      console.log(`[Hub Proxy] ${req.method} ${req.url}`);
+    }
+  });
+
+  app.use("/community-hub", hubProxy);
+  console.log(`✅ Community Hub proxy configurado en http://localhost:${process.env.SERVER_PORT || 3001}/community-hub`);
+}
 
 if (process.env.NODE_ENV !== "development") {
   const { MetaGenerator } = require("./utils/boot/MetaGenerator");

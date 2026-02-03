@@ -208,6 +208,7 @@ app.get("/v1/explore", (req, res) => {
       items: items.map(item => ({
         ...item,
         tags: typeof item.tags === 'string' ? JSON.parse(item.tags) : item.tags,
+        importId: `allm-community-id:${type}:${item.id}`,
       })),
       hasMore: false,
       totalCount: items.length,
@@ -248,16 +249,23 @@ app.post("/v1/auth", (req, res) => {
 });
 
 app.get("/v1/items", (req, res) => {
-  const authHeader = req.headers.authorization;
+  const types = ["system-prompt", "slash-command", "agent-skill", "agent-flow"];
+  const createdByMe = {};
   
-  if (!authHeader) {
-    return res.json({ createdByMe: {}, teamItems: [] });
-  }
-  
-  res.json({
-    createdByMe: {},
-    teamItems: [],
+  types.forEach(type => {
+    const items = getItemsByType(type);
+    const pluralType = type.replace("-", "");
+    createdByMe[pluralType + "s"] = {
+      items: items.map(item => ({
+        ...item,
+        tags: typeof item.tags === 'string' ? JSON.parse(item.tags) : item.tags,
+        itemType: type,
+        importId: `allm-community-id:${type}:${item.id}`,
+      })),
+    };
   });
+  
+  res.json({ createdByMe, teamItems: [] });
 });
 
 app.post("/v1/:itemType/create", (req, res) => {
@@ -307,6 +315,35 @@ app.delete("/v1/:itemType/:id", (req, res) => {
   }
   
   res.json({ success: true, error: null });
+});
+
+// Serve static files from public directory
+if (existsSync(join(__dirname, 'public'))) {
+  app.use(express.static(join(__dirname, 'public')));
+}
+
+// SPA-style routing - serve index.html for root
+app.get('/', (req, res) => {
+  res.sendFile(join(__dirname, 'public', 'index.html'));
+});
+
+// Route for admin page
+app.get('/admin', (req, res) => {
+  res.sendFile(join(__dirname, 'public', 'admin.html'));
+});
+
+// Route for explore page
+app.get('/explore', (req, res) => {
+  res.sendFile(join(__dirname, 'public', 'index.html'));
+});
+
+// Handle old .html URLs with redirect
+app.get('/admin.html', (req, res) => {
+  res.redirect(301, '/admin');
+});
+
+app.get('/index.html', (req, res) => {
+  res.redirect(301, '/');
 });
 
 app.listen(PORT, () => {

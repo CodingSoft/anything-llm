@@ -115,10 +115,15 @@ const CommunityHub = {
 
   /**
    * Fetch the explore items from the community hub that are publicly available.
+   * @param {string} category - Optional category filter (e.g., "Productivity", "Development")
    * @returns {Promise<{agentSkills: {items: [], hasMore: boolean, totalCount: number}, systemPrompts: {items: [], hasMore: boolean, totalCount: number}, slashCommands: {items: [], hasMore: boolean, totalCount: number}}>}
    */
-  fetchExploreItems: async () => {
-    return await fetch(`${API_BASE}/community-hub/explore`, {
+  fetchExploreItems: async (category = null) => {
+    const url = category && category !== 'all' 
+      ? `${API_BASE}/community-hub/explore?category=${encodeURIComponent(category)}`
+      : `${API_BASE}/community-hub/explore`;
+    
+    return await fetch(url, {
       method: "GET",
       headers: baseHeaders(),
     })
@@ -248,6 +253,52 @@ const CommunityHub = {
       })
       .catch((e) => ({
         success: false,
+        error: e.message,
+      }));
+  },
+
+  /**
+   * Vote/rate an item in the community hub
+   * @param {string} itemType - The type of item (system-prompt, slash-command, etc.)
+   * @param {string} itemId - The ID of the item
+   * @param {number} vote - The vote value: 1 (upvote), -1 (downvote), or 0 (remove vote)
+   * @returns {Promise<{success: boolean, error: string | null, item: object}>}
+   */
+  voteItem: async (itemType, itemId, vote) => {
+    return await fetch(`${API_BASE}/community-hub/${itemType}/${itemId}/vote`, {
+      method: "POST",
+      headers: baseHeaders(),
+      body: JSON.stringify({ vote }),
+    })
+      .then(async (res) => {
+        const response = await res.json();
+        if (!res.ok) throw new Error(response?.error || "Failed to vote");
+        return { success: true, error: null, item: response.item };
+      })
+      .catch((e) => ({
+        success: false,
+        error: e.message,
+        item: null,
+      }));
+  },
+
+  /**
+   * Get the current user's vote for an item
+   * @param {string} itemType - The type of item
+   * @param {string} itemId - The ID of the item
+   * @returns {Promise<{vote: number, error: string | null}>}
+   */
+  getUserVote: async (itemType, itemId) => {
+    return await fetch(`${API_BASE}/community-hub/${itemType}/${itemId}/vote`, {
+      method: "GET",
+      headers: baseHeaders(),
+    })
+      .then(async (res) => {
+        const response = await res.json();
+        return { vote: response.vote || 0, error: null };
+      })
+      .catch((e) => ({
+        vote: 0,
         error: e.message,
       }));
   },

@@ -333,23 +333,12 @@ const router = createBrowserRouter([
         },
       },
       {
-        path: "/settings/community-hub/trending",
+        path: "/settings/community-hub",
         lazy: async () => {
-          const { default: CommunityHubTrending } = await import(
-            "@/pages/GeneralSettings/CommunityHub/Trending"
+          const { default: CommunityHubUnified } = await import(
+            "@/pages/GeneralSettings/CommunityHub"
           );
-          return { element: <AdminRoute Component={CommunityHubTrending} /> };
-        },
-      },
-      {
-        path: "/settings/community-hub/authentication",
-        lazy: async () => {
-          const { default: CommunityHubAuthentication } = await import(
-            "@/pages/GeneralSettings/CommunityHub/Authentication"
-          );
-          return {
-            element: <AdminRoute Component={CommunityHubAuthentication} />,
-          };
+          return { element: <AdminRoute Component={CommunityHubUnified} /> };
         },
       },
       {

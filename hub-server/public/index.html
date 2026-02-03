@@ -1,253 +1,1271 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Community Hub - CodingSoft</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    :root {
-      --bg-dark: #09090b;
-      --bg-sidebar: #18181b;
-      --bg-card: #27272a;
-      --text-primary: #fff;
-      --text-secondary: #a1a1aa;
-      --text-muted: #71717a;
-      --border: #3f3f46;
-      --primary: #6366f1;
-      --primary-hover: #818cf8;
-    }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: var(--bg-dark);
-      color: var(--text-primary);
-      min-height: 100vh;
-    }
-    .header {
-      background: var(--bg-sidebar);
-      border-bottom: 1px solid var(--border);
-      padding: 1rem 1.5rem;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-    .header-content { max-width: 1400px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; }
-    .logo { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; color: var(--text-primary); }
-    .logo-icon { width: 32px; height: 32px; background: linear-gradient(135deg, var(--primary), #a855f7); border-radius: 6px; display: flex; align-items: center; justify-content: center; }
-    .logo-text { font-size: 1.125rem; font-weight: 600; }
-    .search-container { flex: 1; max-width: 480px; }
-    .search-input { width: 100%; padding: 0.5rem 0.75rem; background: rgba(0, 0, 0, 0.5); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary); font-size: 0.875rem; }
-    .search-input:focus { outline: none; border-color: var(--primary); }
-    .search-input::placeholder { color: var(--text-muted); }
-    .main { max-width: 1400px; margin: 0 auto; padding: 1.5rem; }
-    .section-header { margin-bottom: 1.5rem; }
-    .section-title { font-size: 1.5rem; font-bold; margin-bottom: 0.25rem; }
-    .section-subtitle { font-size: 0.875rem; color: var(--text-secondary); }
-    .category { margin-bottom: 2rem; }
-    .category-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
-    .category-title { font-size: 1.125rem; font-semibold; text-transform: capitalize; }
-    .items-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 0.5rem; }
-    .item-card {
-      background: rgba(0, 0, 0, 0.7);
-      border: 1px solid transparent;
-      border-radius: 8px;
-      padding: 0.75rem;
-      cursor: pointer;
-      transition: all 0.2s;
-      text-decoration: none;
-      display: block;
-    }
-    .item-card:hover { background: rgba(0, 0, 0, 0.85); border-color: var(--border); }
-    .item-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem; }
-    .item-name { font-size: 0.875rem; font-medium; flex: 1; }
-    .visibility-icon { width: 16px; height: 16px; color: var(--text-muted); }
-    .item-description { font-size: 0.75rem; color: rgba(255, 255, 255, 0.6); line-height: 1.4; margin: 0.25rem 0 0.5rem; }
-    .item-section { margin-top: 0.5rem; }
-    .item-section-label { font-size: 0.75rem; font-semibold; color: rgba(255, 255, 255, 0.6); margin-bottom: 0.25rem; }
-    .item-code { font-size: 0.75rem; font-family: monospace; background: #18181b; padding: 0.375rem 0.5rem; border-radius: 4px; border: 1px solid var(--border); color: rgba(255, 255, 255, 0.6); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .item-prompt { font-size: 0.75rem; font-family: monospace; background: #18181b; padding: 0.375rem 0.5rem; border-radius: 4px; border: 1px solid var(--border); color: rgba(255, 255, 255, 0.6); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-    .item-footer { display: flex; justify-content: flex-end; margin-top: 0.5rem; }
-    .import-btn { color: var(--primary); font-size: 0.875rem; font-weight: 500; text-decoration: none; }
-    .import-btn:hover { color: var(--primary-hover); }
-    .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.8); z-index: 1000; align-items: center; justify-content: center; padding: 1rem; }
-    .modal-overlay.active { display: flex; }
-    .modal { background: var(--bg-sidebar); border-radius: 12px; max-width: 520px; width: 100%; max-height: 85vh; overflow-y: auto; }
-    .modal-header { padding: 1rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-    .modal-title { font-size: 1rem; font-semibold; }
-    .modal-close { width: 28px; height: 28px; background: rgba(0, 0, 0, 0.5); border: 1px solid var(--border); border-radius: 4px; color: var(--text-secondary); cursor: pointer; font-size: 1rem; }
-    .modal-close:hover { background: rgba(0, 0, 0, 0.7); color: var(--text-primary); }
-    .modal-body { padding: 1rem; }
-    .modal-description { font-size: 0.875rem; color: rgba(255, 255, 255, 0.6); line-height: 1.5; margin-bottom: 1rem; }
-    .modal-section { margin-bottom: 1rem; }
-    .modal-section-label { font-size: 0.75rem; font-weight: 600; color: rgba(255, 255, 255, 0.6); text-transform: uppercase; margin-bottom: 0.5rem; }
-    .modal-code { font-size: 0.8125rem; font-family: monospace; background: #18181b; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border); color: rgba(255, 255, 255, 0.8); white-space: pre-wrap; max-height: 150px; overflow-y: auto; }
-    .modal-actions { display: flex; gap: 0.5rem; padding: 1rem; border-top: 1px solid var(--border); }
-    .btn { flex: 1; padding: 0.625rem 1rem; border-radius: 6px; font-size: 0.875rem; font-weight: 500; cursor: pointer; text-align: center; transition: all 0.2s; }
-    .btn-secondary { background: rgba(0, 0, 0, 0.4); border: 1px solid var(--border); color: var(--text-primary); }
-    .btn-secondary:hover { background: rgba(0, 0, 0, 0.6); }
-    .btn-primary { background: var(--primary); border: none; color: white; }
-    .btn-primary:hover { background: var(--primary-hover); }
-    .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(100px); background: #22c55e; color: white; padding: 0.75rem 1.25rem; border-radius: 8px; font-size: 0.875rem; font-weight: 500; opacity: 0; transition: all 0.3s; z-index: 2000; }
-    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-    .empty-state { text-align: center; padding: 4rem 2rem; color: var(--text-muted); }
-    .copy-box { background: #18181b; border: 1px solid var(--border); border-radius: 6px; padding: 0.75rem; margin-top: 0.75rem; }
-    .copy-box-label { font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.5rem; }
-    .copy-box-content { display: flex; align-items: center; gap: 0.5rem; }
-    .copy-box-code { font-family: monospace; font-size: 0.75rem; color: var(--text-primary); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .copy-btn { padding: 0.375rem 0.75rem; background: var(--primary); border: none; border-radius: 4px; color: white; font-size: 0.75rem; cursor: pointer; }
-    .copy-btn:hover { background: var(--primary-hover); }
-    .instructions { background: rgba(99, 102, 241, 0.1); border: 1px solid var(--primary); border-radius: 8px; padding: 1rem; margin-top: 1rem; }
-    .instructions-title { font-size: 0.875rem; font-weight: 600; color: var(--primary); margin-bottom: 0.5rem; }
-    .instructions-list { font-size: 0.8125rem; color: var(--text-secondary); line-height: 1.6; padding-left: 1.25rem; }
-    .instructions-list li { margin-bottom: 0.25rem; }
-    @media (max-width: 640px) {
-      .header-content { flex-wrap: wrap; }
-      .search-container { order: 3; max-width: 100%; width: 100%; margin-top: 0.5rem; }
-      .main { padding: 1rem; }
-      .items-grid { grid-template-columns: 1fr; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Community Hub - CodingSoft</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+--bg-primary: #0f0f0f;
+--bg-secondary: #1a1a1a;
+--bg-tertiary: #2a2a2a;
+--bg-card: #1a1a1a;
+--text-primary: #ffffff;
+--text-secondary: rgba(255, 255, 255, 0.7);
+--text-muted: rgba(255, 255, 255, 0.5);
+--border-color: #333333;
+--accent-primary: #46c8ff;
+--accent-secondary: #7cd4fd;
+--accent-gradient: linear-gradient(135deg, #46c8ff, #7cd4fd);
+--card-hover: #252525;
+--success: #22c55e;
+--warning: #f59e0b;
+--error: #ef4444;
+--shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+--shadow-md: 0 4px 6px rgba(0,0,0,0.4);
+--shadow-lg: 0 10px 25px rgba(0,0,0,0.5);
+--radius-sm: 6px;
+--radius-md: 8px;
+--radius-lg: 12px;
+--radius-xl: 16px;
+--prompt-color: #a855f7;
+--command-color: #f59e0b;
+--skill-color: #10b981;
+--flow-color: #3b82f6;
+}
+
+[data-theme="light"] {
+--bg-primary: #ffffff;
+--bg-secondary: #f8f9fa;
+--bg-tertiary: #e9ecef;
+--bg-card: #ffffff;
+--text-primary: #1a1a1a;
+--text-secondary: #495057;
+--text-muted: #6c757d;
+--border-color: #dee2e6;
+--accent-primary: #0284c7;
+--accent-secondary: #0369a1;
+--accent-gradient: linear-gradient(135deg, #0284c7, #0369a1);
+--card-hover: #f1f3f5;
+--shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+--shadow-md: 0 4px 6px rgba(0,0,0,0.07);
+--shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+body {
+font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+background: var(--bg-primary);
+color: var(--text-primary);
+min-height: 100vh;
+line-height: 1.6;
+}
+
+/* Navbar estilo AnythingLLM */
+.navbar {
+background: var(--bg-secondary);
+border-bottom: 1px solid var(--border-color);
+padding: 0 1.5rem;
+height: 64px;
+display: flex;
+align-items: center;
+position: sticky;
+top: 0;
+z-index: 100;
+}
+
+.navbar-content {
+max-width: 1400px;
+width: 100%;
+margin: 0 auto;
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 1.5rem;
+}
+
+.logo {
+display: flex;
+align-items: center;
+gap: 0.75rem;
+text-decoration: none;
+color: var(--text-primary);
+font-weight: 600;
+font-size: 1.125rem;
+}
+
+.logo-icon {
+width: 36px;
+height: 36px;
+background: var(--accent-gradient);
+border-radius: 10px;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 1.25rem;
+box-shadow: var(--shadow-md);
+}
+
+.nav-center {
+flex: 1;
+max-width: 480px;
+}
+
+.search-box {
+position: relative;
+width: 100%;
+}
+
+.search-input {
+width: 100%;
+padding: 0.625rem 1rem 0.625rem 2.75rem;
+background: var(--bg-primary);
+border: 1px solid var(--border-color);
+border-radius: var(--radius-lg);
+color: var(--text-primary);
+font-size: 0.9375rem;
+outline: none;
+transition: all 0.2s ease;
+}
+
+.search-input:focus {
+border-color: var(--accent-primary);
+box-shadow: 0 0 0 3px rgba(70, 200, 255, 0.15);
+}
+
+.search-icon {
+position: absolute;
+left: 1rem;
+top: 50%;
+transform: translateY(-50%);
+color: var(--text-muted);
+width: 18px;
+height: 18px;
+}
+
+.nav-links {
+display: flex;
+align-items: center;
+gap: 0.5rem;
+}
+
+.nav-link {
+display: flex;
+align-items: center;
+gap: 0.5rem;
+padding: 0.625rem 1rem;
+color: var(--text-secondary);
+text-decoration: none;
+font-size: 0.9375rem;
+font-weight: 500;
+border-radius: var(--radius-md);
+transition: all 0.2s ease;
+}
+
+.nav-link:hover {
+color: var(--text-primary);
+background: var(--bg-tertiary);
+}
+
+.nav-link.active {
+color: var(--accent-primary);
+background: rgba(70, 200, 255, 0.1);
+}
+
+.theme-toggle {
+width: 40px;
+height: 40px;
+border-radius: var(--radius-md);
+border: 1px solid var(--border-color);
+background: var(--bg-primary);
+color: var(--text-primary);
+cursor: pointer;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 1.125rem;
+transition: all 0.2s ease;
+margin-left: 0.5rem;
+}
+
+.theme-toggle:hover {
+background: var(--card-hover);
+border-color: var(--accent-primary);
+}
+
+/* Main content */
+.main {
+max-width: 1400px;
+margin: 0 auto;
+padding: 2rem 1.5rem;
+}
+
+/* Hero section */
+.hero {
+text-align: center;
+margin-bottom: 3rem;
+padding: 2rem 0;
+}
+
+.hero-title {
+font-size: 2.5rem;
+font-weight: 700;
+margin-bottom: 0.75rem;
+background: var(--accent-gradient);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+}
+
+.hero-subtitle {
+font-size: 1.125rem;
+color: var(--text-secondary);
+max-width: 600px;
+margin: 0 auto;
+}
+
+/* Category filters */
+.category-filters {
+display: flex;
+gap: 0.75rem;
+margin-bottom: 2.5rem;
+overflow-x: auto;
+padding-bottom: 0.5rem;
+scrollbar-width: none;
+}
+
+.category-filters::-webkit-scrollbar {
+display: none;
+}
+
+.filter-btn {
+padding: 0.625rem 1.25rem;
+background: var(--bg-secondary);
+border: 1px solid var(--border-color);
+border-radius: var(--radius-lg);
+color: var(--text-secondary);
+font-size: 0.9375rem;
+font-weight: 500;
+cursor: pointer;
+transition: all 0.2s ease;
+display: flex;
+align-items: center;
+gap: 0.5rem;
+white-space: nowrap;
+}
+
+.filter-btn:hover {
+background: var(--bg-tertiary);
+color: var(--text-primary);
+border-color: var(--accent-primary);
+}
+
+.filter-btn.active {
+background: var(--accent-primary);
+color: #000;
+border-color: var(--accent-primary);
+}
+
+/* Section title */
+.section-header {
+display: flex;
+align-items: center;
+justify-content: space-between;
+margin-bottom: 1.5rem;
+}
+
+.section-title {
+font-size: 1.25rem;
+font-weight: 600;
+display: flex;
+align-items: center;
+gap: 0.75rem;
+}
+
+.section-icon {
+width: 32px;
+height: 32px;
+border-radius: var(--radius-md);
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 1rem;
+}
+
+.section-icon.prompts { background: rgba(168, 85, 247, 0.15); color: var(--prompt-color); }
+.section-icon.commands { background: rgba(245, 158, 11, 0.15); color: var(--command-color); }
+.section-icon.skills { background: rgba(16, 185, 129, 0.15); color: var(--skill-color); }
+.section-icon.flows { background: rgba(59, 130, 246, 0.15); color: var(--flow-color); }
+
+.item-count {
+font-size: 0.875rem;
+color: var(--text-muted);
+background: var(--bg-secondary);
+padding: 0.375rem 0.875rem;
+border-radius: var(--radius-lg);
+font-weight: 500;
+}
+
+/* Grid */
+.items-grid {
+display: grid;
+grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+gap: 1.25rem;
+margin-bottom: 3rem;
+}
+
+/* Cards */
+.item-card {
+background: var(--bg-card);
+border: 1px solid var(--border-color);
+border-radius: var(--radius-xl);
+padding: 1.25rem;
+cursor: pointer;
+transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+position: relative;
+overflow: hidden;
+}
+
+.item-card::before {
+content: '';
+position: absolute;
+top: 0;
+left: 0;
+right: 0;
+height: 3px;
+background: var(--accent-gradient);
+opacity: 0;
+transition: opacity 0.3s ease;
+}
+
+.item-card:hover {
+background: var(--card-hover);
+border-color: var(--accent-primary);
+transform: translateY(-3px);
+box-shadow: var(--shadow-lg);
+}
+
+.item-card:hover::before {
+opacity: 1;
+}
+
+.item-card.type-prompt::before { background: linear-gradient(90deg, var(--prompt-color), #c084fc); }
+.item-card.type-command::before { background: linear-gradient(90deg, var(--command-color), #fbbf24); }
+.item-card.type-skill::before { background: linear-gradient(90deg, var(--skill-color), #34d399); }
+.item-card.type-flow::before { background: linear-gradient(90deg, var(--flow-color), #60a5fa); }
+
+.card-header {
+display: flex;
+align-items: flex-start;
+gap: 0.875rem;
+margin-bottom: 0.875rem;
+}
+
+.card-icon {
+width: 40px;
+height: 40px;
+border-radius: var(--radius-md);
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 1.25rem;
+flex-shrink: 0;
+}
+
+.card-icon.prompts { background: rgba(168, 85, 247, 0.1); color: var(--prompt-color); }
+.card-icon.commands { background: rgba(245, 158, 11, 0.1); color: var(--command-color); }
+.card-icon.skills { background: rgba(16, 185, 129, 0.1); color: var(--skill-color); }
+.card-icon.flows { background: rgba(59, 130, 246, 0.1); color: var(--flow-color); }
+
+.card-title-group {
+flex: 1;
+min-width: 0;
+}
+
+.card-title {
+font-size: 1rem;
+font-weight: 600;
+color: var(--text-primary);
+margin-bottom: 0.25rem;
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+}
+
+.card-meta {
+display: flex;
+align-items: center;
+gap: 0.5rem;
+font-size: 0.75rem;
+color: var(--text-muted);
+}
+
+.visibility-badge {
+padding: 0.125rem 0.5rem;
+border-radius: 4px;
+font-size: 0.625rem;
+font-weight: 600;
+text-transform: uppercase;
+letter-spacing: 0.025em;
+}
+
+.visibility-badge.public {
+background: rgba(34, 197, 94, 0.1);
+color: var(--success);
+}
+
+.visibility-badge.private {
+background: rgba(239, 68, 68, 0.1);
+color: var(--error);
+}
+
+.card-description {
+font-size: 0.9375rem;
+color: var(--text-secondary);
+line-height: 1.5;
+margin-bottom: 1rem;
+display: -webkit-box;
+-webkit-line-clamp: 2;
+-webkit-box-orient: vertical;
+overflow: hidden;
+}
+
+.card-footer {
+display: flex;
+align-items: center;
+justify-content: space-between;
+margin-top: auto;
+}
+
+.card-tags {
+display: flex;
+gap: 0.375rem;
+flex-wrap: wrap;
+}
+
+.card-tag {
+font-size: 0.6875rem;
+color: var(--text-muted);
+background: var(--bg-secondary);
+padding: 0.25rem 0.5rem;
+border-radius: 4px;
+border: 1px solid var(--border-color);
+}
+
+.card-action {
+color: var(--accent-primary);
+font-size: 0.9375rem;
+font-weight: 600;
+display: flex;
+align-items: center;
+gap: 0.25rem;
+}
+
+/* Empty state */
+.empty-state {
+text-align: center;
+padding: 5rem 2rem;
+color: var(--text-muted);
+}
+
+.empty-state-icon {
+font-size: 4rem;
+margin-bottom: 1.25rem;
+opacity: 0.6;
+}
+
+.empty-state-title {
+font-size: 1.375rem;
+font-weight: 600;
+color: var(--text-primary);
+margin-bottom: 0.5rem;
+}
+
+.empty-state-text {
+font-size: 1rem;
+color: var(--text-secondary);
+max-width: 400px;
+margin: 0 auto;
+}
+
+/* Skeleton loading */
+.skeleton-container {
+display: grid;
+grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+gap: 1.25rem;
+}
+
+.skeleton-card {
+background: var(--bg-card);
+border: 1px solid var(--border-color);
+border-radius: var(--radius-xl);
+padding: 1.25rem;
+height: 200px;
+}
+
+.skeleton {
+background: linear-gradient(90deg, var(--bg-tertiary) 25%, var(--bg-secondary) 50%, var(--bg-tertiary) 75%);
+background-size: 200% 100%;
+animation: skeleton-loading 1.5s infinite;
+border-radius: var(--radius-md);
+}
+
+@keyframes skeleton-loading {
+0% { background-position: 200% 0; }
+100% { background-position: -200% 0; }
+}
+
+.skeleton-circle {
+width: 40px;
+height: 40px;
+border-radius: 50%;
+}
+
+.skeleton-line {
+height: 16px;
+margin-bottom: 0.75rem;
+}
+
+.skeleton-line.short {
+width: 60%;
+}
+
+.skeleton-line.medium {
+width: 80%;
+}
+
+/* Modal */
+.modal-overlay {
+display: none;
+position: fixed;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background: rgba(0, 0, 0, 0.8);
+backdrop-filter: blur(8px);
+z-index: 1000;
+align-items: center;
+justify-content: center;
+padding: 1.5rem;
+opacity: 0;
+transition: opacity 0.3s ease;
+}
+
+.modal-overlay.active {
+display: flex;
+opacity: 1;
+}
+
+.modal {
+background: var(--bg-secondary);
+border: 1px solid var(--border-color);
+border-radius: var(--radius-xl);
+max-width: 600px;
+width: 100%;
+max-height: 85vh;
+overflow-y: auto;
+box-shadow: var(--shadow-lg);
+transform: scale(0.95) translateY(20px);
+opacity: 0;
+transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modal-overlay.active .modal {
+transform: scale(1) translateY(0);
+opacity: 1;
+}
+
+.modal-header {
+padding: 1.5rem;
+border-bottom: 1px solid var(--border-color);
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 1rem;
+}
+
+.modal-title-group {
+flex: 1;
+}
+
+.modal-title {
+font-size: 1.25rem;
+font-weight: 600;
+margin-bottom: 0.25rem;
+}
+
+.modal-subtitle {
+font-size: 0.9375rem;
+color: var(--text-secondary);
+}
+
+.modal-close {
+width: 36px;
+height: 36px;
+border-radius: var(--radius-md);
+border: 1px solid var(--border-color);
+background: var(--bg-primary);
+color: var(--text-secondary);
+cursor: pointer;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 1.5rem;
+transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+background: var(--bg-tertiary);
+color: var(--text-primary);
+border-color: var(--accent-primary);
+}
+
+.modal-body {
+padding: 1.5rem;
+}
+
+.modal-section {
+margin-bottom: 1.5rem;
+}
+
+.modal-section:last-child {
+margin-bottom: 0;
+}
+
+.section-label {
+font-size: 0.75rem;
+font-weight: 600;
+color: var(--text-muted);
+text-transform: uppercase;
+letter-spacing: 0.05em;
+margin-bottom: 0.5rem;
+}
+
+.code-block {
+font-family: 'JetBrains Mono', monospace;
+font-size: 0.875rem;
+background: var(--bg-primary);
+border: 1px solid var(--border-color);
+border-radius: var(--radius-md);
+padding: 1rem;
+color: var(--text-secondary);
+overflow-x: auto;
+max-height: 200px;
+overflow-y: auto;
+white-space: pre-wrap;
+word-break: break-word;
+line-height: 1.6;
+}
+
+.code-block::-webkit-scrollbar {
+width: 6px;
+height: 6px;
+}
+
+.code-block::-webkit-scrollbar-track {
+background: var(--bg-secondary);
+border-radius: 3px;
+}
+
+.code-block::-webkit-scrollbar-thumb {
+background: var(--border-color);
+border-radius: 3px;
+}
+
+.import-section {
+background: linear-gradient(135deg, rgba(70, 200, 255, 0.08), rgba(124, 212, 253, 0.08));
+border: 1px solid rgba(70, 200, 255, 0.2);
+border-radius: var(--radius-lg);
+padding: 1.25rem;
+margin-top: 1.5rem;
+}
+
+.import-title {
+font-size: 1rem;
+font-weight: 600;
+color: var(--accent-primary);
+margin-bottom: 0.75rem;
+display: flex;
+align-items: center;
+gap: 0.5rem;
+}
+
+.import-steps {
+font-size: 0.9375rem;
+color: var(--text-secondary);
+line-height: 1.7;
+padding-left: 1.25rem;
+margin-bottom: 1rem;
+}
+
+.import-steps li {
+margin-bottom: 0.375rem;
+}
+
+.import-box {
+background: var(--bg-primary);
+border: 1px solid var(--border-color);
+border-radius: var(--radius-md);
+padding: 1rem;
+}
+
+.import-box-label {
+font-size: 0.75rem;
+color: var(--text-muted);
+margin-bottom: 0.5rem;
+}
+
+.import-box-row {
+display: flex;
+gap: 0.75rem;
+}
+
+.import-id {
+font-family: 'JetBrains Mono', monospace;
+font-size: 0.8125rem;
+background: var(--bg-secondary);
+border: 1px solid var(--border-color);
+border-radius: var(--radius-md);
+padding: 0.625rem 0.875rem;
+color: var(--text-primary);
+flex: 1;
+overflow: hidden;
+text-overflow: ellipsis;
+white-space: nowrap;
+}
+
+.copy-btn {
+padding: 0.625rem 1rem;
+background: var(--accent-primary);
+border: none;
+border-radius: var(--radius-md);
+color: #000;
+font-size: 0.9375rem;
+font-weight: 600;
+cursor: pointer;
+display: flex;
+align-items: center;
+gap: 0.375rem;
+transition: all 0.2s ease;
+}
+
+.copy-btn:hover {
+background: var(--accent-secondary);
+transform: translateY(-1px);
+}
+
+.copy-btn.copied {
+background: var(--success);
+}
+
+.modal-footer {
+padding: 1.25rem 1.5rem;
+border-top: 1px solid var(--border-color);
+display: flex;
+justify-content: flex-end;
+gap: 0.75rem;
+}
+
+.btn {
+padding: 0.75rem 1.25rem;
+border-radius: var(--radius-md);
+font-size: 0.9375rem;
+font-weight: 600;
+cursor: pointer;
+transition: all 0.2s ease;
+border: none;
+display: flex;
+align-items: center;
+gap: 0.5rem;
+}
+
+.btn-primary {
+background: var(--accent-primary);
+color: #000;
+}
+
+.btn-primary:hover {
+background: var(--accent-secondary);
+transform: translateY(-1px);
+}
+
+.btn-secondary {
+background: var(--bg-primary);
+border: 1px solid var(--border-color);
+color: var(--text-primary);
+}
+
+.btn-secondary:hover {
+background: var(--bg-tertiary);
+border-color: var(--accent-primary);
+}
+
+/* Toast */
+.toast {
+position: fixed;
+bottom: 2rem;
+left: 50%;
+transform: translateX(-50%) translateY(100px);
+background: var(--success);
+color: white;
+padding: 1rem 1.5rem;
+border-radius: var(--radius-lg);
+font-size: 1rem;
+font-weight: 500;
+display: flex;
+align-items: center;
+gap: 0.5rem;
+opacity: 0;
+transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+z-index: 2000;
+box-shadow: var(--shadow-lg);
+}
+
+.toast.show {
+transform: translateX(-50%) translateY(0);
+opacity: 1;
+}
+
+.toast.error {
+background: var(--error);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+.navbar {
+padding: 0 1rem;
+height: 60px;
+}
+
+.hero-title {
+font-size: 1.875rem;
+}
+
+.items-grid {
+grid-template-columns: 1fr;
+}
+
+.section-header {
+flex-direction: column;
+align-items: flex-start;
+gap: 0.75rem;
+}
+
+.nav-center {
+order: 3;
+max-width: 100%;
+width: 100%;
+}
+
+.nav-links {
+display: none;
+}
+
+.modal-overlay {
+padding: 0;
+}
+
+.modal {
+max-height: 100vh;
+border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+position: fixed;
+bottom: 0;
+left: 0;
+right: 0;
+transform: translateY(100%);
+}
+
+.modal-overlay.active .modal {
+transform: translateY(0);
+}
+}
+
+@media (max-width: 480px) {
+.logo span {
+display: none;
+}
+
+.category-filters {
+gap: 0.5rem;
+}
+
+.filter-btn {
+padding: 0.5rem 0.875rem;
+font-size: 0.875rem;
+}
+}
+</style>
 </head>
 <body>
-  <header class="header">
-    <div class="header-content">
-      <a href="/" class="logo">
-        <div class="logo-icon">⚡</div>
-        <span class="logo-text">Community Hub</span>
-      </a>
-      <div class="search-container">
-        <input type="text" class="search-input" id="searchInput" placeholder="Search prompts, commands, agents...">
-      </div>
-    </div>
-  </header>
+<nav class="navbar">
+<div class="navbar-content">
+<a href="/" class="logo">
+<div class="logo-icon">⚡</div>
+<span>CodingSoft Community Hub</span>
+</a>
+<div class="nav-center">
+<div class="search-box">
+<svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+</svg>
+<input type="text" class="search-input" id="searchInput" placeholder="Buscar prompts, comandos, agentes...">
+</div>
+</div>
+<div class="nav-links">
+<a href="/" class="nav-link active">Explorar</a>
+<a href="/admin" class="nav-link">Administrar</a>
+<button class="theme-toggle" id="themeToggle" title="Cambiar tema">🌙</button>
+</div>
+</div>
+</nav>
 
-  <main class="main">
-    <div class="section-header">
-      <h1 class="section-title">Recently Added on CodingSoft Community Hub</h1>
-      <p class="section-subtitle">Explore the latest additions to the CodingSoft Community Hub</p>
-    </div>
-    <div id="categoriesContainer"></div>
-  </main>
+<main class="main">
+<div class="hero">
+<h1 class="hero-title">Community Hub</h1>
+<p class="hero-subtitle">Descubre y comparte prompts, comandos slash y agentes personalizados con la comunidad</p>
+</div>
 
-  <div class="modal-overlay" id="modalOverlay">
-    <div class="modal">
-      <div class="modal-header">
-        <h3 class="modal-title" id="modalTitle">Item Title</h3>
-        <button class="modal-close" onclick="closeModal()">×</button>
-      </div>
-      <div class="modal-body">
-        <p class="modal-description" id="modalDescription">Description</p>
-        <div class="modal-section" id="commandSection" style="display: none;">
-          <div class="modal-section-label">Command</div>
-          <div class="modal-code" id="modalCommand">/command</div>
-        </div>
-        <div class="modal-section">
-          <div class="modal-section-label" id="promptLabel">Prompt</div>
-          <div class="modal-code" id="modalPrompt">Prompt content</div>
-        </div>
-        <div class="instructions">
-          <div class="instructions-title">How to import to CodingSoft:</div>
-          <ol class="instructions-list">
-            <li>Click "Copy Import ID" below</li>
-            <li>Go to <strong>Settings → Community Hub → Import Item</strong></li>
-            <li>Paste the Import ID and continue</li>
-          </ol>
-        </div>
-        <div class="copy-box">
-          <div class="copy-box-label">Import ID (click to copy)</div>
-          <div class="copy-box-content">
-            <span class="copy-box-code" id="importIdCode">allm-community-id:...</span>
-            <button class="copy-btn" onclick="copyImportId()">Copy Import ID</button>
-          </div>
-        </div>
-      </div>
-      <div class="modal-actions">
-        <button class="btn btn-secondary" onclick="closeModal()">Close</button>
-      </div>
-    </div>
-  </div>
+<div class="category-filters" id="categoryFilters">
+<button class="filter-btn active" data-filter="all">
+<span>📦</span>
+<span>Todos</span>
+</button>
+<button class="filter-btn" data-filter="systemPrompts">
+<span>📝</span>
+<span>Prompts</span>
+</button>
+<button class="filter-btn" data-filter="slashCommands">
+<span>⚡</span>
+<span>Comandos</span>
+</button>
+<button class="filter-btn" data-filter="agentSkills">
+<span>🎯</span>
+<span>Skills</span>
+</button>
+<button class="filter-btn" data-filter="agentFlows">
+<span>🔄</span>
+<span>Flows</span>
+</button>
+</div>
 
-  <div class="toast" id="toast">✓ Import ID copied to clipboard!</div>
+<div id="contentContainer">
+<div class="skeleton-container" id="skeletonLoading">
+<div class="skeleton-card">
+<div class="skeleton skeleton-circle" style="margin-bottom: 1rem;"></div>
+<div class="skeleton skeleton-line"></div>
+<div class="skeleton skeleton-line short"></div>
+</div>
+<div class="skeleton-card">
+<div class="skeleton skeleton-circle" style="margin-bottom: 1rem;"></div>
+<div class="skeleton skeleton-line"></div>
+<div class="skeleton skeleton-line short"></div>
+</div>
+<div class="skeleton-card">
+<div class="skeleton skeleton-circle" style="margin-bottom: 1rem;"></div>
+<div class="skeleton skeleton-line"></div>
+<div class="skeleton skeleton-line short"></div>
+</div>
+</div>
+</div>
+</main>
 
-  <script>
-    const API_BASE = '/v1';
-    let allItems = { systemPrompts: [], slashCommands: [], agentSkills: [], agentFlows: [] };
-    let selectedItem = null;
+<div class="modal-overlay" id="modalOverlay">
+<div class="modal">
+<div class="modal-header">
+<div class="modal-title-group">
+<h3 class="modal-title" id="modalTitle">Título del Item</h3>
+<p class="modal-subtitle" id="modalDescription">Descripción</p>
+</div>
+<button class="modal-close" onclick="closeModal()">×</button>
+</div>
+<div class="modal-body">
+<div class="modal-section" id="commandSection" style="display: none;">
+<div class="section-label">Comando</div>
+<div class="code-block" id="modalCommand">/comando</div>
+</div>
+<div class="modal-section">
+<div class="section-label" id="promptLabel">Prompt</div>
+<div class="code-block" id="modalPrompt">Contenido del prompt</div>
+</div>
+<div class="import-section">
+<div class="import-title">
+<span>📥</span>
+<span>Cómo importar a CodingSoft</span>
+</div>
+<ol class="import-steps">
+<li>Haz clic en "Copiar ID" a continuación</li>
+<li>Ve a <strong>Ajustes → Community Hub → Importar Item</strong></li>
+<li>Pega el ID de importación y continúa</li>
+</ol>
+<div class="import-box">
+<div class="import-box-label">ID de Importación</div>
+<div class="import-box-row">
+<span class="import-id" id="importIdCode">codingsoft-hub-id:...</span>
+<button class="copy-btn" id="copyBtn" onclick="copyImportId()">
+<span>📋</span>
+<span>Copiar</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<div class="modal-footer">
+<button class="btn btn-secondary" onclick="closeModal()">Cerrar</button>
+<button class="btn btn-primary" onclick="copyImportId()">
+<span>📋</span>
+<span>Copiar ID</span>
+</button>
+</div>
+</div>
+</div>
 
-    const readableType = (type) => ({ 'systemPrompts': 'System Prompts', 'slashCommands': 'Slash Commands', 'agentSkills': 'Agent Skills', 'agentFlows': 'Agent Flows' }[type] || type);
-    const slugify = (text) => text.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
+<div class="toast" id="toast">✅ Copiado al portapapeles</div>
 
-    async function fetchItems() {
-      try {
-        const response = await fetch(`${API_BASE}/explore`);
-        const data = await response.json();
-        allItems = { 'systemPrompts': data.systemPrompts?.items || [], 'slashCommands': data.slashCommands?.items || [], 'agentSkills': data.agentSkills?.items || [], 'agentFlows': data.agentFlows?.items || [] };
-        renderCategories();
-      } catch (error) { console.error('Error fetching items:', error); }
-    }
+<script>
+const API_BASE = '/v1';
+let allItems = { systemPrompts: [], slashCommands: [], agentSkills: [], agentFlows: [] };
+let currentFilter = 'all';
 
-    function renderCategories() {
-      const container = document.getElementById('categoriesContainer');
-      const categories = Object.keys(allItems).filter(type => allItems[type].length > 0);
-      if (categories.length === 0) { container.innerHTML = '<div class="empty-state"><p>No items found</p></div>'; return; }
-      container.innerHTML = categories.map(type => `<div class="category"><div class="category-header"><h3 class="category-title">${readableType(type)}</h3></div><div class="items-grid">${allItems[type].map(item => renderCard(type, item)).join('')}</div></div>`).join('');
-    }
+const typeConfig = {
+systemPrompts: { label: 'System Prompts', icon: '📝', color: 'prompts', shortLabel: 'Prompts' },
+slashCommands: { label: 'Slash Commands', icon: '⚡', color: 'commands', shortLabel: 'Comandos' },
+agentSkills: { label: 'Agent Skills', icon: '🎯', color: 'skills', shortLabel: 'Skills' },
+agentFlows: { label: 'Agent Flows', icon: '🔄', color: 'flows', shortLabel: 'Flows' }
+};
 
-    function renderCard(type, item) {
-      const importId = item.importId || `allm-community-id:${type.replace(/s$/, '')}:${item.id}`;
-      const visibilityIcon = item.visibility === 'private' ? '<svg class="visibility-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>' : '<svg class="visibility-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>';
-      return `<a href="#" class="item-card" onclick="event.preventDefault(); showItem('${type}', '${item.id}')"><div class="item-header"><span class="item-name">${item.name}</span>${visibilityIcon}</div><p class="item-description">${item.description}</p>${type === 'slashCommands' ? `<div class="item-section"><div class="item-section-label">Command</div><div class="item-code">${item.command || ''}</div></div>` : ''}<div class="item-section"><div class="item-section-label">${type === 'systemPrompts' ? 'Prompt' : 'Config'}</div><div class="item-prompt">${item.prompt || item.config || ''}</div></div><div class="item-footer"><span class="import-btn">Select →</span></div></a>`;
-    }
+const typeMap = {
+'systemPrompts': 'system-prompt',
+'slashCommands': 'slash-command',
+'agentSkills': 'agent-skill',
+'agentFlows': 'agent-flow'
+};
 
-    function showItem(type, id) {
-      const typeMap = { 'systemPrompts': 'system-prompt', 'slashCommands': 'slash-command', 'agentSkills': 'agent-skill', 'agentFlows': 'agent-flow' };
-      const item = allItems[type]?.find(i => i.id === id);
-      if (!item) return;
-      selectedItem = { ...item, itemType: typeMap[type] || type.toLowerCase().replace(/s$/, '') };
-      const importId = item.importId || `allm-community-id:${type.replace(/s$, '')}:${item.id}`;
-      document.getElementById('modalTitle').textContent = item.name;
-      document.getElementById('modalDescription').textContent = item.description;
-      document.getElementById('commandSection').style.display = type === 'slashCommands' ? 'block' : 'none';
-      document.getElementById('modalCommand').textContent = item.command || '';
-      document.getElementById('promptLabel').textContent = type === 'systemPrompts' ? 'Prompt' : 'Config';
-      document.getElementById('modalPrompt').textContent = item.prompt || item.config || '';
-      document.getElementById('importIdCode').textContent = importId;
-      document.getElementById('modalOverlay').classList.add('active');
-    }
+function initTheme() {
+const savedTheme = localStorage.getItem('theme') || 'dark';
+document.documentElement.setAttribute('data-theme', savedTheme);
+updateThemeIcon(savedTheme);
+}
 
-    function closeModal() { document.getElementById('modalOverlay').classList.remove('active'); selectedItem = null; }
+function toggleTheme() {
+const currentTheme = document.documentElement.getAttribute('data-theme');
+const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+document.documentElement.setAttribute('data-theme', newTheme);
+localStorage.setItem('theme', newTheme);
+updateThemeIcon(newTheme);
+}
 
-    async function copyImportId() {
-      const importId = document.getElementById('importIdCode').textContent;
-      try {
-        await navigator.clipboard.writeText(importId);
-        showToast('✓ Import ID copied to clipboard!');
-      } catch (e) {
-        showToast('✗ Failed to copy');
-      }
-    }
+function updateThemeIcon(theme) {
+const btn = document.getElementById('themeToggle');
+btn.textContent = theme === 'dark' ? '☀️' : '🌙';
+btn.title = theme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro';
+}
 
-    function showToast(message) {
-      const toast = document.getElementById('toast');
-      toast.textContent = message;
-      toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 3000);
-    }
+function renderSkeleton() {
+const container = document.getElementById('contentContainer');
+container.innerHTML = `
+<div class="skeleton-container">
+${Array(6).fill(0).map(() => `
+<div class="skeleton-card">
+<div style="display: flex; align-items: center; gap: 0.875rem; margin-bottom: 1rem;">
+<div class="skeleton skeleton-circle"></div>
+<div style="flex: 1;">
+<div class="skeleton skeleton-line" style="width: 70%; margin-bottom: 0.5rem;"></div>
+<div class="skeleton skeleton-line" style="width: 40%;"></div>
+</div>
+</div>
+<div class="skeleton skeleton-line medium"></div>
+<div class="skeleton skeleton-line short"></div>
+</div>
+`).join('')}
+</div>
+`;
+}
 
-    function filterItems() {
-      const search = document.getElementById('searchInput').value.toLowerCase();
-      document.querySelectorAll('.item-card').forEach(card => {
-        const name = card.querySelector('.item-name')?.textContent?.toLowerCase() || '';
-        const desc = card.querySelector('.item-description')?.textContent?.toLowerCase() || '';
-        card.style.display = (name.includes(search) || desc.includes(search) || !search) ? '' : 'none';
-      });
-    }
+async function fetchItems() {
+renderSkeleton();
+try {
+const response = await fetch(`${API_BASE}/explore`);
+const data = await response.json();
+allItems = {
+'systemPrompts': data.systemprompts?.items || [],
+'slashCommands': data.slashcommands?.items || [],
+'agentSkills': data.agentskills?.items || [],
+'agentFlows': data.agentflows?.items || []
+};
+renderCategories();
+} catch (error) {
+console.error('Error fetching items:', error);
+document.getElementById('contentContainer').innerHTML = `
+<div class="empty-state">
+<div class="empty-state-icon">⚠️</div>
+<div class="empty-state-title">Error al cargar</div>
+<div class="empty-state-text">No se pudieron cargar los items. Asegúrate de que el servidor esté ejecutándose.</div>
+</div>
+`;
+}
+}
 
-    document.getElementById('searchInput').addEventListener('input', filterItems);
-    document.getElementById('modalOverlay').addEventListener('click', (e) => { if (e.target === document.getElementById('modalOverlay')) closeModal(); });
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+function renderCategories() {
+const container = document.getElementById('contentContainer');
+const categories = Object.keys(allItems).filter(type => allItems[type]?.length > 0);
 
-    fetchItems();
-  </script>
+if (categories.length === 0) {
+container.innerHTML = `
+<div class="empty-state">
+<div class="empty-state-icon">📦</div>
+<div class="empty-state-title">No hay items</div>
+<div class="empty-state-text">No se encontraron items en el Community Hub.</div>
+</div>
+`;
+return;
+}
+
+const categoriesToShow = currentFilter === 'all' ? categories : categories.filter(c => c === currentFilter);
+
+container.innerHTML = categoriesToShow.map(type => {
+const config = typeConfig[type];
+return `
+<div class="category-section" style="margin-bottom: 3rem;">
+<div class="section-header">
+<h2 class="section-title">
+<div class="section-icon ${config.color}">${config.icon}</div>
+${config.label}
+</h2>
+<span class="item-count">${allItems[type].length} items</span>
+</div>
+<div class="items-grid">
+${allItems[type].map(item => renderCard(type, item)).join('')}
+</div>
+</div>
+`;
+}).join('');
+}
+
+function renderCard(type, item) {
+const itemType = typeMap[type] || type.toLowerCase().replace(/s$/, '');
+const importId = item.importId || `codingsoft-hub-id:${itemType}:${item.id}`;
+const config = typeConfig[type];
+
+return `
+<div class="item-card type-${itemType.replace('-', '')}" onclick="showItem('${type}', '${item.id}')">
+<div class="card-header">
+<div class="card-icon ${config.color}">${config.icon}</div>
+<div class="card-title-group">
+<div class="card-title">${item.name}</div>
+<div class="card-meta">
+<span class="visibility-badge ${item.visibility || 'public'}">${item.visibility === 'private' ? 'Privado' : 'Público'}</span>
+<span>•</span>
+<span>${item.author || 'CodingSoft'}</span>
+</div>
+</div>
+</div>
+<p class="card-description">${item.description}</p>
+<div class="card-footer">
+<div class="card-tags">
+${(item.tags || []).slice(0, 3).map(tag => `<span class="card-tag">${tag}</span>`).join('')}
+</div>
+<span class="card-action">Importar →</span>
+</div>
+</div>
+`;
+}
+
+function showItem(type, id) {
+const item = allItems[type]?.find(i => i.id === id);
+if (!item) return;
+
+const itemType = typeMap[type] || type.toLowerCase().replace(/s$/, '');
+const importId = item.importId || `codingsoft-hub-id:${itemType}:${item.id}`;
+
+const modalOverlay = document.getElementById('modalOverlay');
+const copyBtn = document.getElementById('copyBtn');
+copyBtn.classList.remove('copied');
+copyBtn.innerHTML = '<span>📋</span><span>Copiar</span>';
+
+document.getElementById('modalTitle').textContent = item.name;
+document.getElementById('modalDescription').textContent = item.description;
+document.getElementById('commandSection').style.display = type === 'slashCommands' ? 'block' : 'none';
+document.getElementById('modalCommand').textContent = item.command || '';
+document.getElementById('promptLabel').textContent = type === 'systemPrompts' ? 'Prompt' : 'Configuración';
+document.getElementById('modalPrompt').textContent = item.prompt || item.config || '';
+document.getElementById('importIdCode').textContent = importId;
+
+modalOverlay.classList.add('active');
+document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+const modalOverlay = document.getElementById('modalOverlay');
+modalOverlay.classList.remove('active');
+document.body.style.overflow = '';
+}
+
+async function copyImportId() {
+const importId = document.getElementById('importIdCode').textContent;
+const copyBtn = document.getElementById('copyBtn');
+
+try {
+await navigator.clipboard.writeText(importId);
+copyBtn.classList.add('copied');
+copyBtn.innerHTML = '<span>✓</span><span>¡Copiado!</span>';
+showToast('✅ ID copiado al portapapeles');
+
+setTimeout(() => {
+copyBtn.classList.remove('copied');
+copyBtn.innerHTML = '<span>📋</span><span>Copiar</span>';
+}, 2000);
+} catch (e) {
+showToast('❌ Error al copiar', true);
+}
+}
+
+function showToast(message, isError = false) {
+const toast = document.getElementById('toast');
+toast.textContent = message;
+toast.classList.toggle('error', isError);
+toast.classList.add('show');
+setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+function filterItems() {
+const search = document.getElementById('searchInput').value.toLowerCase();
+document.querySelectorAll('.item-card').forEach(card => {
+const name = card.querySelector('.card-title')?.textContent?.toLowerCase() || '';
+const desc = card.querySelector('.card-description')?.textContent?.toLowerCase() || '';
+card.closest('.category-section').style.display = (name.includes(search) || desc.includes(search) || !search) ? '' : 'none';
+});
+}
+
+function setupFilters() {
+document.querySelectorAll('.filter-btn').forEach(btn => {
+btn.addEventListener('click', () => {
+document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+btn.classList.add('active');
+currentFilter = btn.dataset.filter;
+renderCategories();
+});
+});
+}
+
+// Event listeners
+document.getElementById('searchInput').addEventListener('input', filterItems);
+document.getElementById('modalOverlay').addEventListener('click', (e) => {
+if (e.target === document.getElementById('modalOverlay')) closeModal();
+});
+document.addEventListener('keydown', (e) => {
+if (e.key === 'Escape') closeModal();
+});
+document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+
+// Initialize
+initTheme();
+setupFilters();
+fetchItems();
+</script>
 </body>
 </html>

@@ -19,9 +19,14 @@ export default function ExperimentalFeatures() {
   useEffect(() => {
     async function fetchSettings() {
       setLoading(true);
-      const { settings } = await Admin.systemPreferences();
-      setFeatureFlags(settings?.feature_flags ?? {});
-      setLoading(false);
+      try {
+        const { settings } = await Admin.systemPreferences() || {};
+        setFeatureFlags(settings?.feature_flags ?? {});
+      } catch (error) {
+        console.error("Failed to fetch experimental features settings:", error);
+      } finally {
+        setLoading(false);
+      }
     }
     fetchSettings();
   }, []);
