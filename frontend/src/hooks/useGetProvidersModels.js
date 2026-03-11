@@ -19,6 +19,7 @@ const PROVIDER_DEFAULT_MODELS = {
   togetherai: [],
   fireworksai: [],
   "nvidia-nim": [],
+  nvidia: [],
   groq: [],
   cohere: [
     "command-r",
@@ -54,6 +55,7 @@ const groupedProviders = [
   "ppio",
   "docker-model-runner",
   "sambanova",
+  "nvidia",
 ];
 export default function useGetProviderModels(provider = null) {
   const [defaultModels, setDefaultModels] = useState([]);
