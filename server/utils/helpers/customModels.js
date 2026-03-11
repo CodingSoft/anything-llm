@@ -49,6 +49,7 @@ const SUPPORT_CUSTOM_MODELS = [
   "privatemode",
   "sambanova",
   "lemonade",
+  "nvidia",
   // Embedding Engines
   "native-embedder",
   "cohere-embedder",
@@ -133,6 +134,8 @@ async function getCustomModels(provider = "", apiKey = null, basePath = null) {
       return await getLemonadeModels(basePath);
     case "lemonade-embedder":
       return await getLemonadeModels(basePath, "embedding");
+    case "nvidia":
+      return await getNvidiaModels();
     default:
       return { models: [], error: "Invalid provider for custom models" };
   }
@@ -1001,6 +1004,43 @@ async function getSambaNovaModels(_apiKey = null) {
   } catch (e) {
     console.error(`SambaNova:getSambaNovaModels`, e.message);
     return { models: [], error: "Could not fetch SambaNova Models" };
+  }
+}
+
+/**
+ * Get NVIDIA models
+ * @param {string} _apiKey - The API key to use
+ * @returns {Promise<{models: Array<{id: string, organization: string, name: string}>, error: string | null}>}
+ */
+async function getNvidiaModels(_apiKey = null) {
+  try {
+    const apiKey =
+      _apiKey === true
+        ? process.env.NVIDIA_API_KEY
+        : _apiKey || process.env.NVIDIA_API_KEY || null;
+    const { OpenAI: OpenAIApi } = require("openai");
+    const openai = new OpenAIApi({
+      baseURL: "https://integrate.api.nvidia.com/v1",
+      apiKey,
+    });
+    const models = await openai.models
+      .list()
+      .then((results) => results.data)
+      .then((models) =>
+        models.map((model) => ({
+          id: model.id,
+          organization: model.id.split("/")[0] || "NVIDIA",
+          name: model.id,
+        }))
+      )
+      .catch((e) => {
+        console.error(`NVIDIA:listModels`, e.message);
+        return [];
+      });
+    return { models, error: null };
+  } catch (e) {
+    console.error(`NVIDIA:getNvidiaModels`, e.message);
+    return { models: [], error: "Could not fetch NVIDIA Models" };
   }
 }
 

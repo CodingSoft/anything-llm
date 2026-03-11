@@ -74,6 +74,11 @@ const LLM_PROVIDER_PRIVACY_MAP = {
     ],
     logo: NvidiaNimLogo,
   },
+  nvidia: {
+    name: "NVIDIA",
+    policyUrl: "https://www.nvidia.com/en-us/privacy-center/",
+    logo: NvidiaNimLogo,
+  },
   lmstudio: {
     name: "LMStudio",
     description: [

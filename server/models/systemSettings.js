@@ -692,6 +692,10 @@ const SystemSettings = {
       LemonadeLLMModelPref: process.env.LEMONADE_LLM_MODEL_PREF,
       LemonadeLLMModelTokenLimit:
         process.env.LEMONADE_LLM_MODEL_TOKEN_LIMIT || 8192,
+
+      // NVIDIA Keys
+      NvidiaApiKey: !!process.env.NVIDIA_API_KEY,
+      NvidiaModelPref: process.env.NVIDIA_MODEL_PREF,
     };
   },
 

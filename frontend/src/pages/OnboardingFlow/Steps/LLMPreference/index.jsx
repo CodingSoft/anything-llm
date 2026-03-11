@@ -71,6 +71,7 @@ import DockerModelRunnerOptions from "@/components/LLMSelection/DockerModelRunne
 import PrivateModeOptions from "@/components/LLMSelection/PrivateModeOptions";
 import SambaNovaOptions from "@/components/LLMSelection/SambaNovaOptions";
 import LemonadeOptions from "@/components/LLMSelection/LemonadeOptions";
+import NvidiaOptions from "@/components/LLMSelection/NvidiaOptions";
 
 import LLMItem from "@/components/LLMSelection/LLMItem";
 import System from "@/models/system";
@@ -175,6 +176,13 @@ const LLMS = [
     logo: SambaNovaLogo,
     options: (settings) => <SambaNovaOptions settings={settings} />,
     description: "Run open source models from SambaNova.",
+  },
+  {
+    name: "NVIDIA",
+    value: "nvidia",
+    logo: NvidiaNimLogo,
+    options: (settings) => <NvidiaOptions settings={settings} />,
+    description: "Access NVIDIA cloud models via the Integration API.",
   },
   {
     name: "Novita AI",

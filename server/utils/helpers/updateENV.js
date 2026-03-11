@@ -833,6 +833,16 @@ const KEY_MAPPING = {
     envKey: "LEMONADE_LLM_MODEL_TOKEN_LIMIT",
     checks: [nonZero],
   },
+
+  // NVIDIA Options
+  NvidiaApiKey: {
+    envKey: "NVIDIA_API_KEY",
+    checks: [isNotEmpty],
+  },
+  NvidiaModelPref: {
+    envKey: "NVIDIA_MODEL_PREF",
+    checks: [isNotEmpty],
+  },
 };
 
 function isNotEmpty(input = "") {
@@ -950,6 +960,7 @@ function supportedLLM(input = "") {
     "privatemode",
     "sambanova",
     "lemonade",
+    "nvidia",
   ].includes(input);
   return validSelection ? null : `${input} is not a valid LLM provider.`;
 }
