@@ -186,7 +186,7 @@ export default function SettingsSidebar() {
 }
 
 function SupportEmail() {
-  const [supportEmail, setSupportEmail] = useState(paths.mailToMintplex());
+  const [supportEmail, setSupportEmail] = useState(paths.mailToCodingSoft());
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -195,7 +195,7 @@ function SupportEmail() {
       setSupportEmail(
         supportEmail?.email
           ? `mailto:${supportEmail.email}`
-          : paths.mailToMintplex()
+          : paths.mailToCodingSoft()
       );
     };
     fetchSupportEmail();

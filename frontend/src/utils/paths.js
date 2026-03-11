@@ -47,7 +47,7 @@ export default {
     },
   },
   github: () => {
-    return "https://github.com/Mintplex-Labs/anything-llm";
+    return "https://github.com/CodingSoft/anything-llm";
   },
   discord: () => {
     return "https://discord.com/invite/6UyHPeGZAC";
@@ -58,11 +58,11 @@ export default {
   chatModes: () => {
     return "https://docs.anythingllm.com/features/chat-modes";
   },
-  mailToMintplex: () => {
-    return "mailto:team@mintplexlabs.com";
+  mailToCodingSoft: () => {
+    return "mailto:contact@codingsoft.org";
   },
   hosting: () => {
-    return "https://my.mintplexlabs.com/aio-checkout?product=anythingllm";
+    return "https://codingsoft.org";
   },
   workspace: {
     chat: (slug, options = {}) => {

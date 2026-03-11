@@ -1,0 +1,6 @@
+[
+  {
+    "type": "sqlite",
+    "path": "/Users/codingsoft/GitHub/anything-llm/server/storage/anythingllm.db"
+  }
+]

@@ -19,7 +19,7 @@ Here you can find the scripts and known working process to run AnythingLLM outsi
 ## Getting started
 
 1. Clone the repo into your server as the user who the application will run as.
-`git clone git@github.com:Mintplex-Labs/anything-llm.git`
+`git clone git@github.com:CodingSoft/anything-llm.git`
 
 2. `cd anything-llm` and run `yarn setup`. This will install all dependencies to run in production as well as debug the application.
 

@@ -1,11 +1,11 @@
 <a name="readme-top"></a>
 
 <p align="center">
-  <a href="https://anythingllm.com"><img src="https://github.com/Mintplex-Labs/anything-llm/blob/master/images/wordmark.png?raw=true" alt="AnythingLLM logo"></a>
+  <a href="https://github.com/CodingSoft/anything-llm"><img src="https://github.com/CodingSoft/anything-llm/blob/master/images/wordmark.png?raw=true" alt="CodingSoft AnythingLLM logo"></a>
 </p>
 
 <div align='center'>
-<a href="https://trendshift.io/repositories/2415" target="_blank"><img src="https://trendshift.io/api/badge/repositories/2415" alt="Mintplex-Labs%2Fanything-llm | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
+<a href="https://github.com/CodingSoft/anything-llm" target="_blank"><img src="https://img.shields.io/github/stars/CodingSoft/anything-llm?style=social" alt="CodingSoft AnythingLLM"></a>
 </div>
 
 <p align="center">
@@ -17,14 +17,14 @@
   <a href="https://discord.gg/6UyHPeGZAC" target="_blank">
       <img src="https://img.shields.io/badge/chat-mintplex_labs-blue.svg?style=flat&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAH1UExURQAAAP////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////r6+ubn5+7u7/3+/v39/enq6urq6/v7+97f39rb26eoqT1BQ0pOT4+Rkuzs7cnKykZKS0NHSHl8fdzd3ejo6UxPUUBDRdzc3RwgIh8jJSAkJm5xcvHx8aanqB4iJFBTVezt7V5hYlJVVuLj43p9fiImKCMnKZKUlaaoqSElJ21wcfT09O3u7uvr6zE0Nr6/wCUpK5qcnf7+/nh7fEdKTHx+f0tPUOTl5aipqiouMGtubz5CRDQ4OsTGxufn515hY7a3uH1/gXBydIOFhlVYWvX29qaoqCQoKs7Pz/Pz87/AwUtOUNfY2dHR0mhrbOvr7E5RUy8zNXR2d/f39+Xl5UZJSx0hIzQ3Odra2/z8/GlsbaGjpERHSezs7L/BwScrLTQ4Odna2zM3Obm7u3x/gKSmp9jZ2T1AQu/v71pdXkVISr2+vygsLiInKTg7PaOlpisvMcXGxzk8PldaXPLy8u7u7rm6u7S1tsDBwvj4+MPExbe4ueXm5s/Q0Kyf7ewAAAAodFJOUwAABClsrNjx/QM2l9/7lhmI6jTB/kA1GgKJN+nea6vy/MLZQYeVKK3rVA5tAAAAAWJLR0QB/wIt3gAAAAd0SU1FB+cKBAAmMZBHjXIAAAISSURBVDjLY2CAAkYmZhZWNnYODnY2VhZmJkYGVMDIycXNw6sBBbw8fFycyEoYGfkFBDVQgKAAPyMjQl5IWEQDDYgIC8FUMDKKsmlgAWyiEBWMjGJY5YEqxMAqGMWFNXAAYXGgAkYJSQ2cQFKCkYFRShq3AmkpRgYJbghbU0tbB0Tr6ukbgGhDI10gySfBwCwDUWBsYmpmDqQtLK2sbTQ0bO3sHYA8GWYGWWj4WTs6Obu4ami4OTm7exhqeHp5+4DCVJZBDmqdr7ufn3+ArkZgkJ+fU3CIRmgYWFiOARYGvo5OQUHhEUAFTkF+kVHRsLBgkIeyYmLjwoOc4hMSk5JTnINS06DC8gwcEEZ6RqZGlpOfc3ZObl5+gZ+TR2ERWFyBQQFMF5eklmqUpQb5+ReU61ZUOvkFVVXXQBSAraitq29o1GiKcfLzc29u0mjxBzq0tQ0kww5xZHtHUGeXhkZhdxBYgZ4d0LI6c4gjwd7siQQraOp1AivQ6CuAKZCDBBRQQQNQgUb/BGf3cqCCiZOcnCe3QQIKHNRTpk6bDgpZjRkzg3pBQTBrdtCcuZCgluAD0vPmL1gIdvSixUuWgqNs2YJ+DUhkEYxuggkGmOQUcckrioPTJCOXEnZ5JS5YslbGnuyVERlDDFvGEUPOWvwqaH6RVkHKeuDMK6SKnHlVhTgx8jeTmqy6Eij7K6nLqiGyPwChsa1MUrnq1wAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMy0xMC0wNFQwMDozODo0OSswMDowMB9V0a8AAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjMtMTAtMDRUMDA6Mzg6NDkrMDA6MDBuCGkTAAAAKHRFWHRkYXRlOnRpbWVzdGFtcAAyMDIzLTEwLTA0VDAwOjM4OjQ5KzAwOjAwOR1IzAAAAABJRU5ErkJggg==" alt="Discord">
   </a> |
-  <a href="https://github.com/Mintplex-Labs/anything-llm/blob/master/LICENSE" target="_blank">
+  <a href="https://github.com/CodingSoft/anything-llm/blob/master/LICENSE" target="_blank">
       <img src="https://img.shields.io/static/v1?label=license&message=MIT&color=white" alt="License">
   </a> |
-  <a href="https://docs.anythingllm.com" target="_blank">
+  <a href="https://docs.codingsoft.org" target="_blank">
     Docs
   </a> |
-   <a href="https://my.mintplexlabs.com/aio-checkout?product=anythingllm" target="_blank">
-    Hosted Instance
+   <a href="https://codingsoft.org" target="_blank">
+    CodingSoft Website
   </a>
 </p>
 
@@ -33,12 +33,12 @@
 </p>
 
 <p align="center">
-👉 AnythingLLM for desktop (Mac, Windows, & Linux)! <a href="https://anythingllm.com/download" target="_blank"> Download Now</a>
+👉 AnythingLLM for desktop (Mac, Windows, & Linux)! <a href="https://codingsoft.org/download" target="_blank"> Download Now</a>
 </p>
 
 A full-stack application that enables you to turn any document, resource, or piece of content into context that any LLM can use as a reference during chatting. This application allows you to pick and choose which LLM or Vector Database you want to use as well as supporting multi-user management and permissions.
 
-![Chatting](https://github.com/Mintplex-Labs/anything-llm/assets/16845892/cfc5f47c-bd91-4067-986c-f3f49621a859)
+![Chatting](https://github.com/CodingSoft/anything-llm/assets/16845892/cfc5f47c-bd91-4067-986c-f3f49621a859)
 
 <details>
 <summary><kbd>Watch the demo!</kbd></summary>
@@ -55,13 +55,13 @@ AnythingLLM divides your documents into objects called `workspaces`. A Workspace
 
 ## Cool features of AnythingLLM
 
-- 🆕 [**Full MCP-compatibility**](https://docs.anythingllm.com/mcp-compatibility/overview)
-- 🆕 [**No-code AI Agent builder**](https://docs.anythingllm.com/agent-flows/overview)
+- 🆕 [**Full MCP-compatibility**](https://docs.codingsoft.org/mcp-compatibility/overview)
+- 🆕 [**No-code AI Agent builder**](https://docs.codingsoft.org/agent-flows/overview)
 - 🖼️ **Multi-modal support (both closed and open-source LLMs!)**
-- [**Custom AI Agents**](https://docs.anythingllm.com/agent/custom/introduction)
+- [**Custom AI Agents**](https://docs.codingsoft.org/agent/custom/introduction)
 - 👤 Multi-user instance support and permissioning _Docker version only_
 - 🦾 Agents inside your workspace (browse the web, etc)
-- 💬 [Custom Embeddable Chat widget for your website](https://github.com/Mintplex-Labs/anythingllm-embed/blob/main/README.md) _Docker version only_
+- 💬 [Custom Embeddable Chat widget for your website](https://github.com/CodingSoft/anythingllm-embed/blob/main/README.md) _Docker version only_
 - 📖 Multiple document type support (PDF, TXT, DOCX, etc)
 - Simple chat UI with Drag-n-Drop functionality and clear citations.
 - 100% Cloud deployment ready.
@@ -123,7 +123,7 @@ AnythingLLM divides your documents into objects called `workspaces`. A Workspace
 
 **Audio Transcription models:**
 
-- [AnythingLLM Built-in](https://github.com/Mintplex-Labs/anything-llm/tree/master/server/storage/models#audiovideo-transcription) (default)
+- [AnythingLLM Built-in](https://github.com/CodingSoft/anything-llm/tree/master/server/storage/models#audiovideo-transcription) (default)
 - [OpenAI](https://openai.com/)
 
 **TTS (text-to-speech) support:**
@@ -158,12 +158,12 @@ This monorepo consists of six main sections:
 - `server`: A NodeJS express server to handle all the interactions and do all the vectorDB management and LLM interactions.
 - `collector`: NodeJS express server that processes and parses documents from the UI.
 - `docker`: Docker instructions and build process + information for building from source.
-- `embed`: Submodule for generation & creation of the [web embed widget](https://github.com/Mintplex-Labs/anythingllm-embed).
-- `browser-extension`: Submodule for the [chrome browser extension](https://github.com/Mintplex-Labs/anythingllm-extension).
+- `embed`: Submodule for generation & creation of the [web embed widget](https://github.com/CodingSoft/anythingllm-embed).
+- `browser-extension`: Submodule for the [chrome browser extension](https://github.com/CodingSoft/anythingllm-extension).
 
 ## 🛳 Self-Hosting
 
-Mintplex Labs & the community maintain a number of deployment methods, scripts, and templates that you can use to run AnythingLLM locally. Refer to the table below to read how to deploy on your preferred environment or to automatically deploy.
+CodingSoft & the community maintain a number of deployment methods, scripts, and templates that you can use to run AnythingLLM locally. Refer to the table below to read how to deploy on your preferred environment or to automatically deploy.
 | Docker | AWS | GCP | Digital Ocean | Render.com |
 |----------------------------------------|----|-----|---------------|------------|
 | [![Deploy on Docker][docker-btn]][docker-deploy] | [![Deploy on AWS][aws-btn]][aws-deploy] | [![Deploy on GCP][gcp-btn]][gcp-deploy] | [![Deploy on DigitalOcean][do-btn]][do-deploy] | [![Deploy on Render.com][render-btn]][render-deploy] |
@@ -188,7 +188,7 @@ Mintplex Labs & the community maintain a number of deployment methods, scripts, 
 
 ## External Apps & Integrations
 
-_These are apps that are not maintained by Mintplex Labs, but are compatible with AnythingLLM. A listing here is not an endorsement._
+_These are apps that are not maintained by CodingSoft, but are compatible with AnythingLLM. A listing here is not an endorsement._
 
 - [Midori AI Subsystem Manager](https://io.midori-ai.xyz/subsystem/anythingllm/) - A streamlined and efficient way to deploy AI systems using Docker container technology.
 - [Coolify](https://coolify.io/docs/services/anythingllm/) - Deploy AnythingLLM with a single click.
@@ -196,7 +196,7 @@ _These are apps that are not maintained by Mintplex Labs, but are compatible wit
 
 ## Telemetry & Privacy
 
-AnythingLLM by Mintplex Labs Inc contains a telemetry feature that collects anonymous usage information.
+AnythingLLM by CodingSoft Inc contains a telemetry feature that collects anonymous usage information.
 
 <details>
 <summary><kbd>More about Telemetry & Privacy for AnythingLLM</kbd></summary>
@@ -227,7 +227,7 @@ You can verify these claims by finding all locations `Telemetry.sendTelemetry` i
 
 We take privacy very seriously, and we hope you understand that we want to learn how our tool is used, without using annoying popup surveys, so we can build something worth using. The anonymous data is _never_ shared with third parties, ever.
 
-[View all telemetry events in source code](https://github.com/search?q=repo%3AMintplex-Labs%2Fanything-llm%20.sendTelemetry(&type=code)
+[View all telemetry events in source code](https://github.com/search?q=repo%3ACodingSoft%2Fanything-llm%20.sendTelemetry(&type=code)
 
 </details>
 
@@ -251,9 +251,9 @@ We take privacy very seriously, and we hope you understand that we want to learn
 
 ## 🌟 Contributors
 
-[![anythingllm contributors](https://contrib.rocks/image?repo=mintplex-labs/anything-llm)](https://github.com/mintplex-labs/anything-llm/graphs/contributors)
+[![anythingllm contributors](https://contrib.rocks/image?repo=codingsoft/anything-llm)](https://github.com/codingsoft/anything-llm/graphs/contributors)
 
-[![Star History Chart](https://api.star-history.com/svg?repos=mintplex-labs/anything-llm&type=Timeline)](https://star-history.com/#mintplex-labs/anything-llm&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=codingsoft/anything-llm&type=Timeline)](https://star-history.com/#codingsoft/anything-llm&Date)
 
 ## 🔗 More Products
 
@@ -268,15 +268,15 @@ We take privacy very seriously, and we hope you understand that we want to learn
 
 ---
 
-Copyright © 2026 [Mintplex Labs][profile-link]. <br />
+Copyright © 2026 [CodingSoft][profile-link]. <br />
 This project is [MIT](./LICENSE) licensed.
 
 <!-- LINK GROUP -->
 
 [back-to-top]: https://img.shields.io/badge/-BACK_TO_TOP-222628?style=flat-square
-[profile-link]: https://github.com/mintplex-labs
-[vector-admin]: https://github.com/mintplex-labs/vector-admin
-[assistant-swarm]: https://github.com/Mintplex-Labs/openai-assistant-swarm
+[profile-link]: https://github.com/codingsoft
+[vector-admin]: https://github.com/codingsoft/vector-admin
+[assistant-swarm]: https://github.com/CodingSoft/openai-assistant-swarm
 [docker-btn]: ./images/deployBtns/docker.png
 [docker-deploy]: ./docker/HOW_TO_USE_DOCKER.md
 [aws-btn]: ./images/deployBtns/aws.png
@@ -286,9 +286,9 @@ This project is [MIT](./LICENSE) licensed.
 [do-btn]: https://www.deploytodo.com/do-btn-blue.svg
 [do-deploy]: ./cloud-deployments/digitalocean/terraform/DEPLOY.md
 [render-btn]: https://render.com/images/deploy-to-render-button.svg
-[render-deploy]: https://render.com/deploy?repo=https://github.com/Mintplex-Labs/anything-llm&branch=render
+[render-deploy]: https://render.com/deploy?repo=https://github.com/CodingSoft/anything-llm&branch=render
 [render-btn]: https://render.com/images/deploy-to-render-button.svg
-[render-deploy]: https://render.com/deploy?repo=https://github.com/Mintplex-Labs/anything-llm&branch=render
+[render-deploy]: https://render.com/deploy?repo=https://github.com/CodingSoft/anything-llm&branch=render
 [railway-btn]: https://railway.app/button.svg
 [railway-deploy]: https://railway.app/template/HNSCS1?referralCode=WFgJkn
 [repocloud-btn]: https://d16t0pc4846x52.cloudfront.net/deploylobe.svg

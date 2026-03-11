@@ -21,7 +21,7 @@ AnythingLLM allows users to connect to external services (e.g., OpenAI, Anthropi
 _by default, AnythingLLM does **everything on-device first** - so you would have to manually configure and enable these integrations to be subject to third party terms._
 
 ## 4. Security & Network
-* **No "Phone Home":** Aside from [optional telemetry](https://github.com/Mintplex-Labs/anything-llm?tab=readme-ov-file#telemetry--privacy), the software does not require an external connection to Mintplex Labs servers to function.
+* **No "Phone Home":** Aside from [optional telemetry](https://github.com/CodingSoft/anything-llm?tab=readme-ov-file#telemetry--privacy), the software does not require an external connection to Mintplex Labs servers to function.
 * **Environment Security:** The user is responsible for securing the host environment, including network firewalls, SSL/TLS encryption, and access control for the AnythingLLM instance.
 * **CDN Assets:** Out of a convience to international users, we use a hosted CDN to mirror some critical path models (eg: the default embedder and reranking ONNX models) which are not available in all regions. These models are downloaded from our CDN as a fallback, and any air-gapped installations you can either download these models manually or use another provider. Assets of these nature are downloaded once and cached in your associated local storage.
 
